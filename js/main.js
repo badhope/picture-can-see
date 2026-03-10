@@ -61,6 +61,54 @@ class Game {
      * 绑定UI事件
      */
     bindUIEvents() {
+        // 开始游戏按钮
+        const startBtn = document.getElementById('start-game');
+        if (startBtn) {
+            startBtn.addEventListener('click', () => {
+                this.screenManager.showCreateScreen();
+            });
+        }
+        
+        // 确认创建按钮
+        const confirmBtn = document.getElementById('confirm-create');
+        if (confirmBtn) {
+            confirmBtn.addEventListener('click', () => {
+                this.createCharacter();
+            });
+        }
+        
+        // 返回标题按钮
+        const backBtn = document.getElementById('back-to-title');
+        if (backBtn) {
+            backBtn.addEventListener('click', () => {
+                this.screenManager.showTitleScreen();
+            });
+        }
+        
+        // 下一年按钮
+        const nextBtn = document.getElementById('next-year');
+        if (nextBtn) {
+            nextBtn.addEventListener('click', () => {
+                if (this.engine) this.engine.nextYear();
+            });
+        }
+        
+        // 重新开始按钮
+        const restartBtn = document.getElementById('restart-game');
+        if (restartBtn) {
+            restartBtn.addEventListener('click', () => {
+                this.restart();
+            });
+        }
+        
+        // 从总结返回标题
+        const backSummaryBtn = document.getElementById('back-to-title-from-summary');
+        if (backSummaryBtn) {
+            backSummaryBtn.addEventListener('click', () => {
+                this.screenManager.showTitleScreen();
+            });
+        }
+        
         // 性别选择
         const genderBtns = document.querySelectorAll('.gender-btn');
         genderBtns.forEach(btn => {
@@ -68,6 +116,7 @@ class Game {
                 genderBtns.forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 this.selectedGender = btn.dataset.gender;
+                this.updateAvatarPreview();
             });
         });
 
@@ -197,19 +246,43 @@ class Game {
         const zodiacList = Object.entries(CONFIG.ZODIAC);
         
         zodiacList.forEach(([key, zodiac]) => {
-            const option = document.createElement('div');
-            option.className = 'zodiac-option';
-            option.textContent = zodiac.emoji + ' ' + zodiac.name;
-            option.dataset.zodiac = key;
+            const btn = document.createElement('div');
+            btn.className = 'zodiac-btn';
             
-            option.addEventListener('click', () => {
-                document.querySelectorAll('.zodiac-option').forEach(o => o.classList.remove('active'));
-                option.classList.add('active');
+            const icon = document.createElement('span');
+            icon.className = 'zodiac-icon';
+            icon.textContent = zodiac.emoji;
+            
+            const name = document.createElement('span');
+            name.className = 'zodiac-name';
+            name.textContent = zodiac.name;
+            
+            btn.appendChild(icon);
+            btn.appendChild(name);
+            
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.zodiac-btn').forEach(o => o.classList.remove('active'));
+                btn.classList.add('active');
                 this.selectedZodiac = key;
             });
             
-            container.appendChild(option);
+            container.appendChild(btn);
         });
+    }
+    
+    /**
+     * 更新头像预览
+     */
+    updateAvatarPreview() {
+        const preview = document.getElementById('preview-avatar');
+        if (preview) {
+            const avatars = {
+                male: '👦',
+                female: '👧',
+                other: '🧑'
+            };
+            preview.textContent = avatars[this.selectedGender] || '👤';
+        }
     }
 
     /**
@@ -527,9 +600,12 @@ class Game {
         document.querySelector('.gender-btn[data-gender="male"]').classList.add('active');
         
         // 重置星座选择
-        document.querySelectorAll('.zodiac-option').forEach(opt => {
+        document.querySelectorAll('.zodiac-btn').forEach(opt => {
             opt.classList.remove('active');
         });
+        
+        // 重置头像预览
+        this.updateAvatarPreview();
         
         // 重置属性显示
         ['intelligence', 'constitution', 'charisma', 'luck'].forEach(attr => {

@@ -5,7 +5,7 @@
 
 const CONFIG = {
     // 游戏版本
-    VERSION: '1.0.0',
+    VERSION: '1.1.0',
     
     // 属性配置
     ATTRIBUTES: {
