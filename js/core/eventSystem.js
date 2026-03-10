@@ -3,6 +3,33 @@
  * 负责事件的触发、选择、结果计算等逻辑
  */
 
+/**
+ * 获取指定人生阶段的所有事件
+ * @param {string} stageId - 人生阶段ID (baby/child/teen/young/middle/elder)
+ * @returns {Array} 事件数组
+ */
+function getAllEventsForStage(stageId) {
+    const stageMapping = {
+        'baby': 'baby',
+        'child': 'child',
+        'teen': 'teen',
+        'young': 'young',
+        'middle': 'middle',
+        'elder': 'elder'
+    };
+    
+    const eventKey = stageMapping[stageId];
+    if (!eventKey || !EVENTS[eventKey]) {
+        return [];
+    }
+    
+    // 合并阶段事件和通用事件
+    const stageEvents = EVENTS[eventKey] || [];
+    const universalEvents = EVENTS.universal || [];
+    
+    return [...stageEvents, ...universalEvents];
+}
+
 class EventSystem {
     /**
      * 创建事件系统实例
