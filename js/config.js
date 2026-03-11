@@ -7,6 +7,9 @@ const CONFIG = {
     // 游戏版本
     VERSION: '1.4.0',
     
+    // 调试模式
+    DEBUG: false,
+    
     // 属性配置
     ATTRIBUTES: {
         // 属性名称映射（用于显示）

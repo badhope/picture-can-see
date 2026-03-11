@@ -233,7 +233,9 @@ const STORY_CONFIG = {
             }
             event.id = `${lifeStage}_${Date.now()}`;
             EVENTS[lifeStage].push(event);
-            console.log(`[剧情系统] 注册新事件: ${event.title}`);
+            if (typeof CONFIG !== 'undefined' && CONFIG.DEBUG) {
+                console.log(`[剧情系统] 注册新事件: ${event.title}`);
+            }
         },
 
         /**
@@ -244,7 +246,9 @@ const STORY_CONFIG = {
         registerEnding: function(endingId, ending) {
             if (!ENDINGS[endingId]) {
                 ENDINGS[endingId] = ending;
-                console.log(`[剧情系统] 注册新结局: ${ending.name}`);
+                if (typeof CONFIG !== 'undefined' && CONFIG.DEBUG) {
+                    console.log(`[剧情系统] 注册新结局: ${ending.name}`);
+                }
             }
         },
 
@@ -255,7 +259,9 @@ const STORY_CONFIG = {
         registerTalent: function(talent) {
             talent.id = `custom_${Date.now()}`;
             TALENTS.list.push(talent);
-            console.log(`[剧情系统] 注册新天赋: ${talent.name}`);
+            if (typeof CONFIG !== 'undefined' && CONFIG.DEBUG) {
+                console.log(`[剧情系统] 注册新天赋: ${talent.name}`);
+            }
         },
 
         /**
@@ -263,7 +269,9 @@ const STORY_CONFIG = {
          * @param {Object} storyPackage - 剧情包对象
          */
         loadStoryPackage: function(storyPackage) {
-            console.log(`[剧情系统] 加载剧情包: ${storyPackage.name}`);
+            if (typeof CONFIG !== 'undefined' && CONFIG.DEBUG) {
+                console.log(`[剧情系统] 加载剧情包: ${storyPackage.name}`);
+            }
             
             if (storyPackage.events) {
                 for (const [stage, events] of Object.entries(storyPackage.events)) {
@@ -371,10 +379,3 @@ const StoryUtils = {
         return background.events.find(e => e.age === age);
     }
 };
-
-/**
- * 打印剧情系统信息
- */
-console.log('%c📖 剧情系统已加载', 'color: #6366f1; font-size: 14px; font-weight: bold;');
-console.log(`%c版本: ${STORY_CONFIG.version}`, 'color: #94a3b8');
-console.log(`%c总事件数: ${STORY_CONFIG.updateMechanism.getStats().totalEvents}`, 'color: #94a3b8');

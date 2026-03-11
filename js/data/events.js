@@ -1347,25 +1347,22 @@ function filterEvents(events, player) {
 }
 
 /**
- * 打印事件统计信息
+ * 打印事件统计信息（仅开发模式）
  */
 function printEventStats() {
-    let total = 0;
-    const stats = {};
-    
-    for (const [stage, events] of Object.entries(EVENTS)) {
-        if (Array.isArray(events)) {
-            stats[stage] = events.length;
-            total += events.length;
+    if (typeof CONFIG !== 'undefined' && CONFIG.DEBUG) {
+        let total = 0;
+        const stats = {};
+        
+        for (const [stage, events] of Object.entries(EVENTS)) {
+            if (Array.isArray(events)) {
+                stats[stage] = events.length;
+                total += events.length;
+            }
         }
+        
+        console.log('%c📊 事件统计', 'color: #6366f1; font-size: 14px; font-weight: bold;');
+        console.log(`%c总计: ${total} 个事件`, 'color: #94a3b8');
+        console.table(stats);
     }
-    
-    console.log('%c📊 事件统计', 'color: #6366f1; font-size: 14px; font-weight: bold;');
-    console.log(`%c总计: ${total} 个事件`, 'color: #94a3b8');
-    console.table(stats);
-}
-
-// 页面加载后打印统计
-if (typeof window !== 'undefined') {
-    window.addEventListener('load', printEventStats);
 }

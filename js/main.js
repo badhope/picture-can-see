@@ -57,7 +57,9 @@ class Game {
         // 检查是否有存档
         this.checkSaveData();
         
-        console.log('游戏初始化完成');
+        if (CONFIG.DEBUG) {
+            console.log('游戏初始化完成');
+        }
     }
 
     /**
@@ -504,7 +506,9 @@ class Game {
         // 启动游戏
         this.engine.start();
         
-        console.log('游戏开始！', config);
+        if (CONFIG.DEBUG) {
+            console.log('游戏开始！', config);
+        }
     }
 
     /**
@@ -710,7 +714,9 @@ class Game {
         // 启动游戏
         this.engine.start();
         
-        console.log('继续游戏');
+        if (CONFIG.DEBUG) {
+            console.log('继续游戏');
+        }
     }
 
     /**
