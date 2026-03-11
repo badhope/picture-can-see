@@ -305,9 +305,9 @@ class Game {
      * 创建角色并开始游戏
      */
     createCharacter() {
-        // 获取玩家名称
+        // 获取玩家名称并进行XSS过滤
         const nameInput = document.getElementById('player-name');
-        const playerName = nameInput.value.trim() || '玩家';
+        const playerName = Utils.sanitizePlayerName(nameInput.value);
         
         // 验证属性点分配
         if (this.attributePoints !== 0) {

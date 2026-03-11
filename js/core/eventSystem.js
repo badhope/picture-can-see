@@ -277,46 +277,6 @@ class EventSystem {
     }
 
     /**
-     * 检查是否满足职业要求
-     * @param {Object} career - 职业对象
-     * @returns {boolean} 是否满足
-     */
-    meetsCareerRequirements(career) {
-        if (!career.required) return true;
-        
-        for (const attr in career.required) {
-            if (this.player.attributes[attr] < career.required[attr]) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * 建议适合的职业
-     * @returns {Array} 适合的职业数组
-     */
-    suggestCareers() {
-        const allCareers = [];
-        
-        for (const category in CAREERS) {
-            for (const career of CAREERS[category]) {
-                if (this.meetsCareerRequirements(career)) {
-                    allCareers.push({
-                        ...career,
-                        category: category
-                    });
-                }
-            }
-        }
-        
-        // 按薪资排序
-        allCareers.sort((a, b) => b.salary - a.salary);
-        
-        return allCareers.slice(0, 5);
-    }
-
-    /**
      * 重置事件系统
      */
     reset() {

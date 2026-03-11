@@ -248,5 +248,37 @@ const Utils = {
             }
         }
         return CONFIG.LIFE_STAGES[CONFIG.LIFE_STAGES.length - 1];
+    },
+    
+    /**
+     * XSS过滤 - 转义HTML特殊字符
+     * @param {string} str - 要过滤的字符串
+     * @returns {string} 过滤后的安全字符串
+     */
+    escapeHtml: function(str) {
+        if (typeof str !== 'string') return str;
+        const escapeMap = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#x27;',
+            '/': '&#x2F;'
+        };
+        return str.replace(/[&<>"'/]/g, char => escapeMap[char]);
+    },
+    
+    /**
+     * 清理并验证玩家名称
+     * @param {string} name - 玩家名称
+     * @param {number} maxLength - 最大长度
+     * @returns {string} 清理后的名称
+     */
+    sanitizePlayerName: function(name, maxLength = 20) {
+        if (typeof name !== 'string') return '玩家';
+        let sanitized = name.trim().substring(0, maxLength);
+        sanitized = this.escapeHtml(sanitized);
+        if (sanitized.length === 0) return '玩家';
+        return sanitized;
     }
 };
