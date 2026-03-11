@@ -18,7 +18,14 @@ const ENDINGS = {
         { id: 'wise', name: '智慧老人', emoji: '🎓', color: '#06b6d4' },
         { id: 'healthy', name: '健康长寿', emoji: '🏃', color: '#10b981' },
         { id: 'love', name: '情圣', emoji: '💕', color: '#ec4899' },
-        { id: 'career', name: '事业有成', emoji: '💼', color: '#f97316' }
+        { id: 'career', name: '事业有成', emoji: '💼', color: '#f97316' },
+        { id: 'centenarian', name: '百岁老人', emoji: '🎂', color: '#FFD700' },
+        { id: 'philanthropist', name: '慈善家', emoji: '❤️', color: '#ec4899' },
+        { id: 'artist', name: '艺术大师', emoji: '🎨', color: '#8b5cf6' },
+        { id: 'explorer', name: '探险家', emoji: '🗺️', color: '#10b981' },
+        { id: 'hermit', name: '隐士', emoji: '🏔️', color: '#64748b' },
+        { id: 'rebel', name: '叛逆者', emoji: '🔥', color: '#ef4444' },
+        { id: 'prodigy', name: '天才少年', emoji: '🌟', color: '#f59e0b' }
     ],
 
     /**
@@ -79,6 +86,41 @@ const ENDINGS = {
             '你在事业上取得了巨大成功，是行业的标杆！',
             '你的职业成就令人瞩目，是很多人学习的榜样。',
             '事业是你人生的重要组成部分，而你做得非常出色。'
+        ],
+        centenarian: [
+            '你活到了100岁以上，是真正的长寿之人！你的生命故事令人敬佩。',
+            '跨越世纪的见证者，你的人生经历比任何书籍都精彩。',
+            '百岁人生，你见证了时代的变迁，活出了生命的厚度。'
+        ],
+        philanthropist: [
+            '你用财富帮助了无数人，是真正的慈善家！你的善举将被铭记。',
+            '金钱对你来说只是工具，你用它创造了更多的幸福。',
+            '你的人生价值不在于拥有多少，而在于给予了多少。'
+        ],
+        artist: [
+            '你用艺术诠释了人生，你的作品将永远流传。',
+            '艺术是你生命的全部，你用创造力点亮了这个世界。',
+            '你是真正的艺术家，用灵魂创作出了永恒的作品。'
+        ],
+        explorer: [
+            '你的人生是一场精彩的冒险，你探索了未知的世界！',
+            '你从不满足于安逸，勇敢地踏上了每一次冒险之旅。',
+            '探险家的精神在你身上得到了完美的诠释。'
+        ],
+        hermit: [
+            '你选择了远离喧嚣的生活，在宁静中找到了内心的平和。',
+            '隐士的生活让你远离了世俗的纷扰，获得了精神的自由。',
+            '你用独处换来了内心的宁静，这是另一种人生智慧。'
+        ],
+        rebel: [
+            '你从不随波逐流，用叛逆书写了与众不同的人生。',
+            '你挑战了所有的规则和束缚，活出了真正的自我。',
+            '叛逆不是错误，而是你追求自由的方式。'
+        ],
+        prodigy: [
+            '你年少成名，是真正的天才！你的才华令人叹为观止。',
+            '天赋异禀的你，用实力证明了什么叫做天才。',
+            '你的才华在年轻时就已经绽放，是真正的少年天才。'
         ]
     },
 
@@ -109,6 +151,34 @@ const ENDINGS = {
         if (player.maxAttributes.luck <= 3) score *= 0.8;
         
         // 特殊结局检测（优先级高于普通结局）
+        // 百岁老人结局：活到100岁以上
+        if (player.age >= 100) {
+            return this.createEnding('centenarian', stats, player);
+        }
+        // 慈善家结局：金钱超过500万且魅力高
+        if (player.totalMoney >= 5000000 && player.maxAttributes.charisma >= 7) {
+            return this.createEnding('philanthropist', stats, player);
+        }
+        // 艺术大师结局：魅力和运气都高
+        if (player.maxAttributes.charisma >= 8 && player.maxAttributes.luck >= 7) {
+            return this.createEnding('artist', stats, player);
+        }
+        // 探险家结局：运气和体质都高
+        if (player.maxAttributes.luck >= 8 && player.maxAttributes.constitution >= 7) {
+            return this.createEnding('explorer', stats, player);
+        }
+        // 天才少年结局：年轻但智力极高
+        if (player.age < 30 && player.maxAttributes.intelligence >= 9) {
+            return this.createEnding('prodigy', stats, player);
+        }
+        // 隐士结局：活到老年但财富很少
+        if (player.age >= 70 && player.totalMoney < 50000) {
+            return this.createEnding('hermit', stats, player);
+        }
+        // 叛逆者结局：运气低但活到了中年
+        if (player.maxAttributes.luck <= 3 && player.age >= 40) {
+            return this.createEnding('rebel', stats, player);
+        }
         // 财富结局：金钱达到100万且占总评分主导
         if (player.totalMoney >= 1000000 && player.totalMoney / 10000 > player.maxAttributes.intelligence + player.maxAttributes.charisma) {
             return this.createEnding('rich', stats, player);
@@ -268,6 +338,8 @@ const ACHIEVEMENTS = {
         { id: 'rich_2', name: '十万富翁', emoji: '💴', desc: '累计赚取10万元', condition: (p) => p.totalMoney >= 100000 },
         { id: 'rich_3', name: '百万富翁', emoji: '🏦', desc: '累计赚取100万元', condition: (p) => p.totalMoney >= 1000000 },
         { id: 'rich_4', name: '千万富翁', emoji: '💎', desc: '累计赚取1000万元', condition: (p) => p.totalMoney >= 10000000 },
+        { id: 'rich_5', name: '亿万富翁', emoji: '👑', desc: '累计赚取1亿元', condition: (p) => p.totalMoney >= 100000000 },
+        { id: 'rich_6', name: '白手起家', emoji: '📈', desc: '从零开始赚取100万', condition: (p) => p.totalMoney >= 1000000 && p.attributes.luck <= 5 },
         
         // 年龄成就
         { id: 'age_1', name: '而立之年', emoji: '👨', desc: '活到30岁', condition: (p) => p.age >= 30 },
@@ -277,6 +349,7 @@ const ACHIEVEMENTS = {
         { id: 'age_5', name: '古稀之年', emoji: '🧓', desc: '活到70岁', condition: (p) => p.age >= 70 },
         { id: 'age_6', name: '杖朝之年', emoji: '🏳️', desc: '活到80岁', condition: (p) => p.age >= 80 },
         { id: 'age_7', name: '期颐之年', emoji: '🎂', desc: '活到100岁', condition: (p) => p.age >= 100 },
+        { id: 'age_8', name: '长寿秘诀', emoji: '🌟', desc: '活到110岁', condition: (p) => p.age >= 110 },
         
         // 属性成就
         { id: 'attr_1', name: '智力超群', emoji: '🧠', desc: '智力达到8点', condition: (p) => p.maxAttributes.intelligence >= 8 },
@@ -287,11 +360,32 @@ const ACHIEVEMENTS = {
         { id: 'attr_6', name: '倾国倾城', emoji: '👑', desc: '魅力达到10点', condition: (p) => p.maxAttributes.charisma >= 10 },
         { id: 'attr_7', name: '福星高照', emoji: '🍀', desc: '运气达到8点', condition: (p) => p.maxAttributes.luck >= 8 },
         { id: 'attr_8', name: '天命之人', emoji: '⭐', desc: '运气达到10点', condition: (p) => p.maxAttributes.luck >= 10 },
+        { id: 'attr_9', name: '全能天才', emoji: '🏆', desc: '四项属性都达到7点', condition: (p) => 
+            p.maxAttributes.intelligence >= 7 && p.maxAttributes.constitution >= 7 && 
+            p.maxAttributes.charisma >= 7 && p.maxAttributes.luck >= 7 },
+        { id: 'attr_10', name: '完美人生', emoji: '✨', desc: '四项属性都达到8点', condition: (p) => 
+            p.maxAttributes.intelligence >= 8 && p.maxAttributes.constitution >= 8 && 
+            p.maxAttributes.charisma >= 8 && p.maxAttributes.luck >= 8 },
         
         // 事件成就
         { id: 'event_1', name: '人生百态', emoji: '📖', desc: '经历10个事件', condition: (p) => p.eventsCount >= 10 },
         { id: 'event_2', name: '经历丰富', emoji: '📚', desc: '经历30个事件', condition: (p) => p.eventsCount >= 30 },
-        { id: 'event_3', name: '人生百科', emoji: '🌍', desc: '经历50个事件', condition: (p) => p.eventsCount >= 50 }
+        { id: 'event_3', name: '人生百科', emoji: '🌍', desc: '经历50个事件', condition: (p) => p.eventsCount >= 50 },
+        { id: 'event_4', name: '传奇人生', emoji: '📜', desc: '经历80个事件', condition: (p) => p.eventsCount >= 80 },
+        
+        // 特殊成就
+        { id: 'special_1', name: '人生赢家', emoji: '🎯', desc: '活到80岁且累计财富100万', condition: (p) => p.age >= 80 && p.totalMoney >= 1000000 },
+        { id: 'special_2', name: '平凡人生', emoji: '🏠', desc: '活到70岁但财富不超过10万', condition: (p) => p.age >= 70 && p.totalMoney < 100000 },
+        { id: 'special_3', name: '英年早逝', emoji: '😢', desc: '30岁前结束人生', condition: (p) => p.age < 30 },
+        { id: 'special_4', name: '大器晚成', emoji: '🌅', desc: '50岁后累计财富超过100万', condition: (p) => p.age >= 50 && p.totalMoney >= 1000000 },
+        { id: 'special_5', name: '天赋异禀', emoji: '🌟', desc: '初始属性总和超过30点', condition: (p) => p.initialAttributes && 
+            (p.initialAttributes.intelligence + p.initialAttributes.constitution + 
+             p.initialAttributes.charisma + p.initialAttributes.luck) > 30 },
+        { id: 'special_6', name: '逆袭人生', emoji: '🔥', desc: '初始运气低于3但活到60岁', condition: (p) => p.initialAttributes && p.initialAttributes.luck <= 3 && p.age >= 60 },
+        { id: 'special_7', name: '健康达人', emoji: '🏃', desc: '体质从未低于5点', condition: (p) => p.minAttributes && p.minAttributes.constitution >= 5 },
+        { id: 'special_8', name: '学霸之路', emoji: '📖', desc: '智力从未低于5点', condition: (p) => p.minAttributes && p.minAttributes.intelligence >= 5 },
+        { id: 'special_9', name: '社交达人', emoji: '🤝', desc: '魅力从未低于5点', condition: (p) => p.minAttributes && p.minAttributes.charisma >= 5 },
+        { id: 'special_10', name: '幸运儿', emoji: '🌈', desc: '运气从未低于5点', condition: (p) => p.minAttributes && p.minAttributes.luck >= 5 }
     ],
 
     /**

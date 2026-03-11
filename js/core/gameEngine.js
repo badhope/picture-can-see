@@ -36,6 +36,9 @@ class GameEngine {
         // 应用星座加成
         this.player.applyZodiacBonus();
         
+        // 应用天赋效果
+        this.applyTalentEffects(config.talents);
+        
         // 创建事件系统
         this.eventSystem = new EventSystem(this.player);
         
@@ -45,6 +48,38 @@ class GameEngine {
         
         // 触发初始事件
         this.triggerInitialEvent();
+    }
+
+    /**
+     * 应用天赋效果
+     * @param {Array} talents - 天赋数组
+     */
+    applyTalentEffects(talents) {
+        if (!talents || talents.length === 0) return;
+        
+        talents.forEach(talent => {
+            if (talent.effect) {
+                // 应用属性加成
+                for (const attr in talent.effect) {
+                    if (this.player.attributes[attr] !== undefined) {
+                        this.player.attributes[attr] += talent.effect[attr];
+                        // 确保不超过最大值
+                        if (this.player.attributes[attr] > CONFIG.ATTRIBUTES.maxValue) {
+                            this.player.attributes[attr] = CONFIG.ATTRIBUTES.maxValue;
+                        }
+                    } else if (attr === 'money') {
+                        // 金钱加成
+                        this.player.money += talent.effect[attr];
+                        this.player.totalMoney += talent.effect[attr];
+                    }
+                }
+            }
+        });
+        
+        // 更新最高属性记录
+        this.player.updateMaxAttributes();
+        // 更新初始属性记录（天赋加成后的属性）
+        this.player.initialAttributes = { ...this.player.attributes };
     }
 
     /**

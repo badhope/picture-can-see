@@ -51,6 +51,9 @@ class Game {
         // 初始化星座选择
         this.initZodiacSelect();
         
+        // 初始化天赋选择
+        this.initTalentSelect();
+        
         // 检查是否有存档
         this.checkSaveData();
         
@@ -292,6 +295,128 @@ class Game {
             container.appendChild(btn);
         });
     }
+
+    /**
+     * 初始化天赋选择
+     */
+    initTalentSelect() {
+        const container = document.getElementById('talent-select');
+        if (!container) return;
+        
+        this.selectedTalents = [];
+        this.maxTalents = 3;
+        
+        // 随机选择5个天赋供玩家选择
+        const availableTalents = this.getRandomTalents(5);
+        
+        availableTalents.forEach(talent => {
+            const card = document.createElement('div');
+            card.className = 'talent-card';
+            card.dataset.id = talent.id;
+            
+            const icon = document.createElement('div');
+            icon.className = 'talent-icon';
+            icon.textContent = talent.icon;
+            
+            const info = document.createElement('div');
+            info.className = 'talent-info';
+            
+            const name = document.createElement('div');
+            name.className = 'talent-name';
+            name.textContent = talent.name;
+            
+            const desc = document.createElement('div');
+            desc.className = 'talent-desc';
+            desc.textContent = talent.description;
+            
+            const rarity = document.createElement('span');
+            rarity.className = `talent-rarity ${talent.rarity}`;
+            rarity.textContent = TALENTS.rarity[talent.rarity].name;
+            
+            info.appendChild(name);
+            info.appendChild(desc);
+            
+            card.appendChild(icon);
+            card.appendChild(info);
+            card.appendChild(rarity);
+            
+            card.addEventListener('click', () => {
+                this.toggleTalent(talent.id, card);
+            });
+            
+            container.appendChild(card);
+        });
+        
+        // 添加天赋计数显示
+        const countDiv = document.createElement('div');
+        countDiv.className = 'talent-count';
+        countDiv.innerHTML = `
+            <span class="talent-count-text">已选择天赋:</span>
+            <span class="talent-count-value" id="talent-count">0</span>
+            <span class="talent-count-text">/ ${this.maxTalents}</span>
+        `;
+        container.appendChild(countDiv);
+    }
+
+    /**
+     * 随机获取天赋
+     * @param {number} count - 数量
+     * @returns {Array} 天赋数组
+     */
+    getRandomTalents(count) {
+        const allTalents = [...TALENTS.list];
+        const selected = [];
+        
+        // 按稀有度权重随机选择
+        while (selected.length < count && allTalents.length > 0) {
+            const roll = Math.random() * 100;
+            let rarity;
+            
+            if (roll < 3) rarity = 'legendary';
+            else if (roll < 15) rarity = 'epic';
+            else if (roll < 40) rarity = 'rare';
+            else rarity = 'common';
+            
+            // 找到对应稀有度的天赋
+            const index = allTalents.findIndex(t => t.rarity === rarity);
+            if (index !== -1) {
+                selected.push(allTalents[index]);
+                allTalents.splice(index, 1);
+            } else if (allTalents.length > 0) {
+                // 如果没有对应稀有度的，随机选一个
+                const randomIndex = Math.floor(Math.random() * allTalents.length);
+                selected.push(allTalents[randomIndex]);
+                allTalents.splice(randomIndex, 1);
+            }
+        }
+        
+        return selected;
+    }
+
+    /**
+     * 切换天赋选择
+     * @param {string} talentId - 天赋ID
+     * @param {HTMLElement} card - 卡片元素
+     */
+    toggleTalent(talentId, card) {
+        const index = this.selectedTalents.indexOf(talentId);
+        
+        if (index !== -1) {
+            // 取消选择
+            this.selectedTalents.splice(index, 1);
+            card.classList.remove('active');
+        } else if (this.selectedTalents.length < this.maxTalents) {
+            // 选择
+            this.selectedTalents.push(talentId);
+            card.classList.add('active');
+        }
+        
+        // 更新计数显示
+        const countEl = document.getElementById('talent-count');
+        if (countEl) {
+            countEl.textContent = this.selectedTalents.length;
+        }
+    }
     
     /**
      * 更新头像预览
@@ -344,6 +469,11 @@ class Game {
             zodiacBonus = CONFIG.ZODIAC[this.selectedZodiac].bonus;
         }
         
+        // 获取选中的天赋
+        const selectedTalentObjs = this.selectedTalents.map(id => 
+            TALENTS.list.find(t => t.id === id)
+        ).filter(t => t);
+        
         // 创建游戏配置
         const config = {
             name: playerName,
@@ -352,7 +482,8 @@ class Game {
             constitution: this.attributes.constitution,
             charisma: this.attributes.charisma,
             luck: this.attributes.luck,
-            zodiacBonus: zodiacBonus
+            zodiacBonus: zodiacBonus,
+            talents: selectedTalentObjs
         };
         
         // 初始化游戏引擎

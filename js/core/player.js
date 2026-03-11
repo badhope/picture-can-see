@@ -23,8 +23,14 @@ class Player {
             luck: config.luck || CONFIG.ATTRIBUTES.defaultValue
         };
         
+        // 初始属性记录（用于成就判定）
+        this.initialAttributes = { ...this.attributes };
+        
         // 历史最高属性
         this.maxAttributes = { ...this.attributes };
+        
+        // 历史最低属性（用于成就判定）
+        this.minAttributes = { ...this.attributes };
         
         // 人生阶段
         this.lifeStage = CONFIG.LIFE_STAGES[0];
@@ -39,6 +45,9 @@ class Player {
         
         // 星座加成
         this.zodiacBonus = config.zodiacBonus || {};
+        
+        // 天赋
+        this.talents = config.talents || [];
     }
 
     /**
@@ -132,6 +141,11 @@ class Player {
                 // 更新最高属性
                 if (this.attributes[attr] > this.maxAttributes[attr]) {
                     this.maxAttributes[attr] = this.attributes[attr];
+                }
+                
+                // 更新最低属性
+                if (this.attributes[attr] < this.minAttributes[attr]) {
+                    this.minAttributes[attr] = this.attributes[attr];
                 }
             }
         }
