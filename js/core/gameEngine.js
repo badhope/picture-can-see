@@ -10,6 +10,7 @@ class GameEngine {
     constructor() {
         this.player = null;
         this.eventSystem = null;
+        this.storyEngine = null;
         this.isRunning = false;
         this.isAutoPlaying = false;
         this.playSpeed = 1;  // 1: 正常, 2: 快速
@@ -23,6 +24,7 @@ class GameEngine {
         this.onStageChanged = null;
         this.onGameOver = null;
         this.onAttributeChanged = null;
+        this.onStoryProgress = null;
     }
 
     /**
@@ -42,12 +44,43 @@ class GameEngine {
         // 创建事件系统
         this.eventSystem = new EventSystem(this.player);
         
+        // 创建剧情引擎
+        this.storyEngine = new StoryEngine(this.player);
+        this.storyEngine.init();
+        
+        // 应用背景初始加成
+        this.applyBackgroundEffects(config.background);
+        
         // 重置游戏状态
         this.isRunning = true;
         this.isAutoPlaying = false;
         
         // 触发初始事件
         this.triggerInitialEvent();
+    }
+
+    /**
+     * 应用背景效果
+     * @param {string} background - 背景ID
+     */
+    applyBackgroundEffects(background) {
+        if (!background || !STORY_CONFIG.backgrounds[background]) return;
+        
+        const bgData = STORY_CONFIG.backgrounds[background];
+        this.player.background = background;
+        
+        if (bgData.initialBonus) {
+            for (const [attr, value] of Object.entries(bgData.initialBonus)) {
+                if (this.player.attributes[attr] !== undefined) {
+                    this.player.attributes[attr] += value;
+                } else if (attr === 'money') {
+                    this.player.money += value;
+                    this.player.totalMoney += value;
+                }
+            }
+        }
+        
+        this.storyEngine.setFlag(`background_${background}`, true);
     }
 
     /**
@@ -89,6 +122,14 @@ class GameEngine {
     loadGame(saveData) {
         this.player = Player.deserialize(saveData.player);
         this.eventSystem = new EventSystem(this.player);
+        
+        // 加载剧情引擎
+        this.storyEngine = new StoryEngine(this.player);
+        this.storyEngine.init();
+        if (saveData.storyEngine) {
+            this.storyEngine.deserialize(saveData.storyEngine);
+        }
+        
         this.isRunning = true;
         this.isAutoPlaying = false;
     }
@@ -185,7 +226,20 @@ class GameEngine {
             this.onStageChanged(this.player.lifeStage);
         }
         
-        // 尝试触发事件
+        // 首先检查剧情事件
+        const storyEvent = this.checkStoryEvents();
+        if (storyEvent) {
+            this.currentEvent = storyEvent;
+            
+            if (this.onEventTriggered) {
+                this.onEventTriggered(storyEvent);
+            }
+            
+            this.pause();
+            return;
+        }
+        
+        // 尝试触发普通事件
         const event = this.eventSystem.tryTriggerEvent();
         
         if (event) {
@@ -206,6 +260,47 @@ class GameEngine {
     }
 
     /**
+     * 检查剧情事件
+     * @returns {Object|null} 剧情事件
+     */
+    checkStoryEvents() {
+        if (!this.storyEngine) return null;
+        
+        // 检查动态生成的剧情事件
+        const dynamicEvent = StoryEventGenerator.generateDynamicEvent(this.player, this.storyEngine);
+        if (dynamicEvent) {
+            return dynamicEvent;
+        }
+        
+        // 检查剧情线事件
+        const storyEvents = this.storyEngine.getAvailableStoryEvents();
+        if (storyEvents.length > 0) {
+            const storyEvent = storyEvents[0];
+            return {
+                id: storyEvent.chapter.id,
+                title: storyEvent.chapter.name,
+                description: `${storyEvent.storyline.name}: ${storyEvent.chapter.name}`,
+                type: 'storyline',
+                priority: storyEvent.priority,
+                storyline: storyEvent.storyline,
+                chapter: storyEvent.chapter,
+                choices: [
+                    { text: '继续', effects: {} }
+                ]
+            };
+        }
+        
+        // 检查预定义的剧情事件
+        const stageId = this.player.lifeStage.id;
+        const events = getStoryEvents(stageId, this.player, this.storyEngine);
+        if (events.length > 0) {
+            return events[0];
+        }
+        
+        return null;
+    }
+
+    /**
      * 处理玩家选择
      * @param {number} choiceIndex - 选择索引
      * @returns {Object} 选择结果
@@ -215,7 +310,14 @@ class GameEngine {
             return { success: false, message: '没有当前事件' };
         }
         
-        const result = this.eventSystem.handleChoice(choiceIndex);
+        let result;
+        
+        // 检查是否是剧情事件
+        if (this.currentEvent.type === 'storyline' || this.currentEvent.setFlags || this.currentEvent.nextEvent) {
+            result = this.handleStoryChoice(choiceIndex);
+        } else {
+            result = this.eventSystem.handleChoice(choiceIndex);
+        }
         
         if (this.onChoiceMade) {
             this.onChoiceMade(result);
@@ -236,6 +338,93 @@ class GameEngine {
         }
         
         return result;
+    }
+
+    /**
+     * 处理剧情选择
+     * @param {number} choiceIndex - 选择索引
+     * @returns {Object} 选择结果
+     */
+    handleStoryChoice(choiceIndex) {
+        const event = this.currentEvent;
+        const choice = event.choices[choiceIndex];
+        
+        if (!choice) {
+            return { success: false, message: '无效的选择' };
+        }
+        
+        // 应用效果
+        const effects = choice.effects || {};
+        const appliedEffects = this.player.applyEffects(effects);
+        
+        // 处理剧情标记
+        if (choice.setFlags && this.storyEngine) {
+            for (const [flag, value] of Object.entries(choice.setFlags)) {
+                this.storyEngine.setFlag(flag, value);
+            }
+        }
+        
+        // 处理变量变化
+        if (choice.setVariables && this.storyEngine) {
+            for (const [key, value] of Object.entries(choice.setVariables)) {
+                this.storyEngine.setVariable(key, value);
+            }
+        }
+        
+        // 处理关系变化
+        if (choice.relationshipEffects && this.storyEngine) {
+            for (const effect of choice.relationshipEffects) {
+                if (!this.storyEngine.getRelationship(effect.characterId)) {
+                    this.storyEngine.addRelationship(
+                        effect.characterId, 
+                        effect.type || 'friend',
+                        effect.name || effect.characterId,
+                        50
+                    );
+                }
+                this.storyEngine.updateRelationship(effect.characterId, effect.change, effect.reason);
+            }
+        }
+        
+        // 处理金钱变化
+        if (choice.money !== undefined) {
+            this.player.money += choice.money;
+            if (choice.money > 0) {
+                this.player.totalMoney += choice.money;
+            }
+        }
+        
+        // 标记事件完成
+        if (this.storyEngine) {
+            this.storyEngine.setFlag(`${event.id}_complete`, true);
+            
+            // 如果是剧情线事件，完成章节
+            if (event.storyline && event.chapter) {
+                this.storyEngine.completeChapter(event.storyline.id, event.chapter.id);
+            }
+        }
+        
+        // 记录事件
+        this.player.recordEvent(event, choice);
+        
+        // 检查是否有后续事件
+        if (choice.nextEvent) {
+            // 后续事件将在下一个tick触发
+        }
+        
+        // 触发剧情进度回调
+        if (this.onStoryProgress && this.storyEngine) {
+            this.onStoryProgress(this.storyEngine.getStorySummary());
+        }
+        
+        return {
+            success: true,
+            event: event,
+            choice: choice,
+            result: { effects, messages: [] },
+            appliedEffects: appliedEffects,
+            newAttributes: { ...this.player.attributes }
+        };
     }
 
     /**
@@ -403,7 +592,8 @@ class GameEngine {
             isAutoPlaying: this.isAutoPlaying,
             playSpeed: this.playSpeed,
             player: this.player ? this.player.getStatus() : null,
-            currentEvent: this.currentEvent
+            currentEvent: this.currentEvent,
+            storySummary: this.storyEngine ? this.storyEngine.getStorySummary() : null
         };
     }
 
@@ -418,7 +608,8 @@ class GameEngine {
             player: this.player ? this.player.serialize() : null,
             eventSystem: {
                 eventHistory: this.eventSystem.getHistory()
-            }
+            },
+            storyEngine: this.storyEngine ? this.storyEngine.serialize() : null
         };
     }
 }
