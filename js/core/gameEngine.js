@@ -1,6 +1,7 @@
 /**
  * 游戏引擎
  * 核心游戏循环和流程控制
+ * 整合时间轴事件和逻辑链系统
  */
 
 class GameEngine {
@@ -11,13 +12,15 @@ class GameEngine {
         this.player = null;
         this.eventSystem = null;
         this.storyEngine = null;
+        this.chainManager = null;
         this.isRunning = false;
         this.isAutoPlaying = false;
-        this.playSpeed = 1;  // 1: 正常, 2: 快速
+        this.playSpeed = 1;
         this.gameLoop = null;
         this.currentEvent = null;
+        this.currentTimelineEvent = null;
+        this.eventQueue = [];
         
-        // 回调函数
         this.onEventTriggered = null;
         this.onChoiceMade = null;
         this.onAgeChanged = null;
@@ -25,6 +28,7 @@ class GameEngine {
         this.onGameOver = null;
         this.onAttributeChanged = null;
         this.onStoryProgress = null;
+        this.onHealthChanged = null;
     }
 
     /**
@@ -32,31 +36,47 @@ class GameEngine {
      * @param {Object} config - 游戏配置
      */
     initNewGame(config) {
-        // 创建玩家
         this.player = new Player(config);
         
-        // 应用星座加成
         this.player.applyZodiacBonus();
-        
-        // 应用天赋效果
         this.applyTalentEffects(config.talents);
         
-        // 创建事件系统
         this.eventSystem = new EventSystem(this.player);
         
-        // 创建剧情引擎
         this.storyEngine = new StoryEngine(this.player);
         this.storyEngine.init();
         
-        // 应用背景初始加成
+        this.chainManager = new EventChainManager(this.player);
+        
         this.applyBackgroundEffects(config.background);
         
-        // 重置游戏状态
+        this.player.updateMaxHealth();
+        
         this.isRunning = true;
         this.isAutoPlaying = false;
         
-        // 触发初始事件
-        this.triggerInitialEvent();
+        this.triggerBirthEvent();
+    }
+
+    /**
+     * 触发出生事件
+     */
+    triggerBirthEvent() {
+        const birthYear = 2006;
+        this.player.year = birthYear;
+        
+        const babyEvents = TIMELINE_EVENTS.baby || [];
+        const birthEvent = babyEvents.find(e => e.id === 'birth_2006');
+        
+        if (birthEvent) {
+            this.currentTimelineEvent = birthEvent;
+            
+            if (this.onEventTriggered) {
+                this.onEventTriggered(birthEvent);
+            }
+        } else {
+            this.triggerInitialEvent();
+        }
     }
 
     /**
@@ -194,13 +214,11 @@ class GameEngine {
     runGameLoop() {
         if (!this.isRunning) return;
         
-        // 检查玩家是否存活
         if (!this.player.isAlive) {
             this.endGame();
             return;
         }
         
-        // 计算当前间隔
         const interval = this.getInterval();
         
         this.gameLoop = setTimeout(() => {
@@ -213,50 +231,124 @@ class GameEngine {
      * 处理游戏 tick
      */
     processGameTick() {
-        // 年龄增长
         this.player.addAge(1);
         
         if (this.onAgeChanged) {
-            this.onAgeChanged(this.player.age, this.player.lifeStage);
+            this.onAgeChanged(this.player.age, this.player.year, this.player.lifeStage);
         }
         
-        // 检查人生阶段变化
         const stageChanged = this.player.updateLifeStage();
         if (stageChanged && this.onStageChanged) {
             this.onStageChanged(this.player.lifeStage);
         }
         
-        // 首先检查剧情事件
-        const storyEvent = this.checkStoryEvents();
-        if (storyEvent) {
-            this.currentEvent = storyEvent;
+        this.player.updateMaxHealth();
+        
+        const timelineEvent = this.checkTimelineEvents();
+        if (timelineEvent) {
+            this.currentTimelineEvent = timelineEvent;
             
             if (this.onEventTriggered) {
-                this.onEventTriggered(storyEvent);
+                this.onEventTriggered(timelineEvent);
             }
             
             this.pause();
             return;
         }
         
-        // 尝试触发普通事件
-        const event = this.eventSystem.tryTriggerEvent();
-        
-        if (event) {
-            this.currentEvent = event;
+        const chainEvent = this.checkChainEvents();
+        if (chainEvent) {
+            this.currentEvent = chainEvent;
             
             if (this.onEventTriggered) {
-                this.onEventTriggered(event);
+                this.onEventTriggered(chainEvent);
             }
             
-            // 暂停游戏循环，等待玩家选择
             this.pause();
+            return;
         }
         
-        // 检查玩家是否死亡
+        const randomEvent = this.eventSystem.tryTriggerRandomEvent();
+        if (randomEvent) {
+            this.currentEvent = randomEvent;
+            
+            if (this.onEventTriggered) {
+                this.onEventTriggered(randomEvent);
+            }
+            
+            this.pause();
+            return;
+        }
+        
         if (!this.player.isAlive) {
             this.endGame();
         }
+    }
+
+    /**
+     * 检查时间轴事件
+     * @returns {Object|null} 时间轴事件
+     */
+    checkTimelineEvents() {
+        const stageId = this.player.lifeStage.id;
+        const stageEvents = TIMELINE_EVENTS[stageId] || [];
+        
+        const available = filterEventsByConditions(stageEvents, this.player);
+        
+        if (available.length > 0) {
+            return available[0];
+        }
+        
+        return null;
+    }
+
+    /**
+     * 检查逻辑链事件
+     * @returns {Object|null} 逻辑链事件
+     */
+    checkChainEvents() {
+        if (!this.chainManager) return null;
+        
+        const chainEvents = this.chainManager.getChainEventsForAge(this.player.age);
+        
+        for (const ce of chainEvents) {
+            const stageId = this.player.lifeStage.id;
+            const stageEvents = TIMELINE_EVENTS[stageId] || [];
+            const event = stageEvents.find(e => e.id === ce.eventId);
+            
+            if (event) {
+                const conditions = event.conditions || {};
+                
+                let canTrigger = true;
+                
+                if (conditions.flags) {
+                    for (const flag of conditions.flags) {
+                        if (!this.player.hasFlag(flag)) {
+                            canTrigger = false;
+                            break;
+                        }
+                    }
+                }
+                
+                if (conditions.attributes) {
+                    for (const attr in conditions.attributes) {
+                        const required = conditions.attributes[attr];
+                        if (typeof required === 'number') {
+                            if (this.player.attributes[attr] < required) {
+                                canTrigger = false;
+                                break;
+                            }
+                        }
+                    }
+                }
+                
+                if (canTrigger) {
+                    return event;
+                }
+            }
+        }
+        
+        return null;
     }
 
     /**

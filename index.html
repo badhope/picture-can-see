@@ -211,6 +211,21 @@
                                             <div class="attr-bar-fill" id="bar-luck" style="width: 50%"></div>
                                         </div>
                                     </div>
+                                    <div class="attr-card" data-attr="morality">
+                                        <div class="attr-icon">⚖️</div>
+                                        <div class="attr-info">
+                                            <span class="attr-name">道德</span>
+                                            <span class="attr-desc">选项池、NPC态度、结局</span>
+                                        </div>
+                                        <div class="attr-control">
+                                            <button class="attr-btn minus" data-attr="morality">−</button>
+                                            <span class="attr-value" id="attr-morality">5</span>
+                                            <button class="attr-btn plus" data-attr="morality">+</button>
+                                        </div>
+                                        <div class="attr-bar">
+                                            <div class="attr-bar-fill" id="bar-morality" style="width: 50%"></div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -237,6 +252,10 @@
                             </div>
                         </div>
                         <div class="header-center">
+                            <div class="year-display">
+                                <span class="year-label">年份</span>
+                                <span class="year-value" id="player-year">2006</span>
+                            </div>
                             <div class="age-display">
                                 <span class="age-label">年龄</span>
                                 <span class="age-value" id="player-age">0</span>
@@ -248,6 +267,13 @@
                             </div>
                         </div>
                         <div class="header-right">
+                            <div class="health-display">
+                                <span class="health-label">生命</span>
+                                <div class="health-bar">
+                                    <div class="health-bar-fill" id="health-bar-fill" style="width: 50%"></div>
+                                </div>
+                                <span class="health-value" id="health-value">50</span>
+                            </div>
                             <div class="money-badge">
                                 <span class="money-icon">💰</span>
                                 <span class="money-value" id="display-money">0</span>
@@ -510,6 +536,9 @@
     <script src="js/data/events.js"></script>
     <script src="js/data/ending.js"></script>
     <script src="js/data/talents.js"></script>
+    <script src="js/data/timeline.js"></script>
+    <script src="js/data/chains.js"></script>
+    <script src="js/data/endings.js"></script>
     <script src="js/core/player.js"></script>
     <script src="js/core/eventSystem.js"></script>
     <script src="js/core/storyEngine.js"></script>

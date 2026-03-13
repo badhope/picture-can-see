@@ -15,14 +15,24 @@ const CONFIG = {
             intelligence: '智力',
             constitution: '体质',
             charisma: '魅力',
-            luck: '运气'
+            luck: '运气',
+            morality: '道德'
         },
         // 属性图标映射
         icons: {
             intelligence: '💡',
             constitution: '💪',
             charisma: '😊',
-            luck: '🍀'
+            luck: '🍀',
+            morality: '⚖️'
+        },
+        // 属性说明（用于属性分配界面）
+        descriptions: {
+            intelligence: '影响学习能力、职业发展和决策质量',
+            constitution: '决定生命值上限、疾病抵抗力和体力',
+            charisma: '影响社交成功率、人际关系和NPC态度',
+            luck: '调控随机事件触发和意外结果',
+            morality: '影响剧情选项、NPC信任度和结局评价'
         },
         // 属性初始值
         defaultValue: 5,
@@ -281,5 +291,127 @@ const Utils = {
         sanitized = this.escapeHtml(sanitized);
         if (sanitized.length === 0) return '玩家';
         return sanitized;
+    },
+
+    /**
+     * 计算生命值上限
+     * @param {number} constitution - 体质属性
+     * @param {number} age - 年龄
+     * @returns {number} 生命值上限
+     */
+    calculateMaxHealth: function(constitution, age) {
+        let maxHealth = constitution * 10;
+        if (age > 60) {
+            maxHealth -= (age - 60) * 0.5;
+        }
+        if (age > 80) {
+            maxHealth -= (age - 80) * 1;
+        }
+        return Math.max(10, Math.round(maxHealth));
+    },
+
+    /**
+     * 计算每年自然生命值衰减
+     * @param {number} age - 年龄
+     * @returns {number} 每年衰减的生命值
+     */
+    calculateAnnualHealthDecay: function(age) {
+        if (age < 30) return 0;
+        if (age < 50) return 0.2;
+        if (age < 70) return 0.5;
+        if (age < 85) return 1;
+        return 2;
+    },
+
+    /**
+     * 计算疾病概率
+     * @param {number} constitution - 体质属性
+     * @param {number} age - 年龄
+     * @param {number} eraModifier - 时代修正（疫情等）
+     * @returns {number} 疾病概率 (0-1)
+     */
+    calculateIllnessProbability: function(constitution, age, eraModifier = 1) {
+        let baseProb = 0.15;
+        baseProb -= (constitution - 5) * 0.02;
+        if (age < 10) baseProb += 0.05;
+        if (age > 50) baseProb += (age - 50) * 0.005;
+        if (age > 70) baseProb += (age - 70) * 0.01;
+        return Math.max(0.02, Math.min(0.5, baseProb * eraModifier));
+    },
+
+    /**
+     * 计算学业成功率
+     * @param {number} intelligence - 智力属性
+     * @param {number} luck - 运气属性
+     * @returns {number} 成功率 (0-1)
+     */
+    calculateAcademicSuccess: function(intelligence, luck) {
+        let base = 0.5 + (intelligence - 5) * 0.1;
+        base += (luck - 5) * 0.05;
+        return Math.max(0.1, Math.min(0.95, base));
+    },
+
+    /**
+     * 计算社交成功率
+     * @param {number} charisma - 魅力属性
+     * @param {number} intelligence - 智力属性
+     * @returns {number} 成功率 (0-1)
+     */
+    calculateSocialSuccess: function(charisma, intelligence) {
+        let base = 0.4 + charisma * 0.08 + intelligence * 0.04;
+        return Math.max(0.1, Math.min(0.95, base));
+    },
+
+    /**
+     * 计算随机事件触发概率
+     * @param {number} luck - 运气属性
+     * @param {number} baseProbability - 基础概率
+     * @returns {number} 最终概率
+     */
+    calculateRandomEventProbability: function(luck, baseProbability) {
+        return baseProbability * (0.5 + luck * 0.1);
+    },
+
+    /**
+     * 根据属性判断是否能解锁选项
+     * @param {Object} requiredAttrs - 需要的属性 {attr: value}
+     * @param {Object} playerAttrs - 玩家当前属性
+     * @returns {boolean} 是否满足条件
+     */
+    checkAttributeRequirements: function(requiredAttrs, playerAttrs) {
+        for (const attr in requiredAttrs) {
+            const required = requiredAttrs[attr];
+            const playerValue = playerAttrs[attr];
+            
+            if (typeof required === 'number') {
+                if (playerValue < required) return false;
+            } else if (typeof required === 'object') {
+                if (required.min !== undefined && playerValue < required.min) return false;
+                if (required.max !== undefined && playerValue > required.max) return false;
+            }
+        }
+        return true;
+    },
+
+    /**
+     * 计算最终评分（用于结局判定）
+     * @param {Object} attributes - 五大属性
+     * @param {Object} stats - 游戏统计数据
+     * @returns {number} 最终评分
+     */
+    calculateFinalScore: function(attributes, stats) {
+        let score = 0;
+        score += attributes.intelligence * 10;
+        score += attributes.constitution * 10;
+        score += attributes.charisma * 8;
+        score += attributes.luck * 5;
+        score += attributes.morality * 8;
+        
+        if (stats.money > 100000) score += Math.log10(stats.money / 100000) * 10;
+        if (stats.achievements) score += stats.achievements.length * 5;
+        if (stats.married) score += 20;
+        if (stats.children) score += stats.children * 10;
+        
+        return Math.round(score);
     }
 };

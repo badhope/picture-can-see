@@ -18,7 +18,8 @@ class Game {
             intelligence: CONFIG.ATTRIBUTES.defaultValue,
             constitution: CONFIG.ATTRIBUTES.defaultValue,
             charisma: CONFIG.ATTRIBUTES.defaultValue,
-            luck: CONFIG.ATTRIBUTES.defaultValue
+            luck: CONFIG.ATTRIBUTES.defaultValue,
+            morality: CONFIG.ATTRIBUTES.defaultValue
         };
         
         this.loadingTips = [

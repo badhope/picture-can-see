@@ -431,6 +431,78 @@ class EventSystem {
     }
 
     /**
+     * 尝试触发随机事件
+     * @returns {Object|null} 随机事件
+     */
+    tryTriggerRandomEvent() {
+        const luck = this.player.attributes.luck;
+        const age = this.player.age;
+        
+        const eventTypes = ['positive', 'negative', 'neutral'];
+        const weights = [0.3 + (luck - 5) * 0.05, 0.4 - (luck - 5) * 0.05, 0.3];
+        
+        const selectedType = Utils.weightedRandom(eventTypes, weights);
+        const eventsOfType = RANDOM_EVENTS[selectedType] || [];
+        
+        const suitableEvents = eventsOfType.filter(e => {
+            if (e.ageRange) {
+                if (age < e.ageRange[0] || age > e.ageRange[1]) return false;
+            }
+            
+            let probability = e.baseProbability || 0.05;
+            
+            if (e.luckMultiplier) {
+                probability *= (1 + (luck - 5) * e.luckMultiplier * 0.1);
+            }
+            if (e.constitutionMultiplier && selectedType === 'negative') {
+                probability *= (1 + (5 - this.player.attributes.constitution) * e.constitutionMultiplier * 0.1);
+            }
+            if (e.intelligenceMultiplier) {
+                probability *= (1 + (this.player.attributes.intelligence - 5) * e.intelligenceMultiplier * 0.1);
+            }
+            if (e.charismaMultiplier && selectedType === 'positive') {
+                probability *= (1 + (this.player.attributes.charisma - 5) * e.charismaMultiplier * 0.1);
+            }
+            if (e.moralityMultiplier && selectedType === 'neutral') {
+                probability *= (1 + (this.player.attributes.morality - 5) * e.moralityMultiplier * 0.1);
+            }
+            
+            return Math.random() < probability;
+        });
+        
+        if (suitableEvents.length > 0) {
+            const event = suitableEvents[Math.floor(Math.random() * suitableEvents.length)];
+            
+            const randomEvent = {
+                id: event.id,
+                title: event.title,
+                description: event.description,
+                type: 'random',
+                randomEventType: selectedType,
+                choices: [
+                    { 
+                        text: '接受', 
+                        effects: event.effects || {},
+                        healthChange: event.healthChange || 0
+                    }
+                ]
+            };
+            
+            this.currentEvent = randomEvent;
+            
+            if (selectedType === 'positive') {
+                this.player.recordLuckEvent('lucky');
+            } else if (selectedType === 'negative') {
+                this.player.recordLuckEvent('unlucky');
+            }
+            
+            return randomEvent;
+        }
+        
+        return null;
+    }
+
+    /**
      * 根据ID查找事件
      * @param {string} eventId - 事件ID
      * @returns {Object|null} 事件对象

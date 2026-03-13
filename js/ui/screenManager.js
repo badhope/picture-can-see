@@ -189,6 +189,23 @@ class UIUpdater {
             ageEl.textContent = `${player.age}岁`;
         }
 
+        // 年份
+        const yearEl = document.getElementById('player-year');
+        if (yearEl && player.year) {
+            yearEl.textContent = player.year;
+        }
+
+        // 生命值
+        const healthValueEl = document.getElementById('health-value');
+        const healthBarEl = document.getElementById('health-bar-fill');
+        if (healthValueEl && player.health !== undefined) {
+            healthValueEl.textContent = Math.round(player.health);
+        }
+        if (healthBarEl && player.health !== undefined && player.maxHealth > 0) {
+            const healthPercent = (player.health / player.maxHealth) * 100;
+            healthBarEl.style.width = `${healthPercent}%`;
+        }
+
         // 性别图标
         const genderEl = document.getElementById('player-gender');
         if (genderEl) {
@@ -207,7 +224,7 @@ class UIUpdater {
      * @param {Object} attributes - 属性对象
      */
     updateAttributes(attributes) {
-        const attrs = ['intelligence', 'constitution', 'charisma', 'luck'];
+        const attrs = ['intelligence', 'constitution', 'charisma', 'luck', 'morality'];
         
         attrs.forEach(attr => {
             const el = document.getElementById(`display-${attr}`);
@@ -217,6 +234,11 @@ class UIUpdater {
                 // 添加动画效果
                 el.classList.add('pulse');
                 setTimeout(() => el.classList.remove('pulse'), 300);
+            }
+            
+            const barEl = document.getElementById(`display-bar-${attr}`);
+            if (barEl) {
+                barEl.style.width = `${attributes[attr] * 10}%`;
             }
         });
     }

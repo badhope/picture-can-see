@@ -12,42 +12,53 @@ class Player {
         this.name = config.name || '玩家';
         this.gender = config.gender || 'male';
         this.age = 0;
+        this.year = 2006;
         this.money = CONFIG.GAME.initialMoney;
-        this.totalMoney = 0;  // 累计赚取金额
+        this.totalMoney = 0;
         
-        // 属性值
         this.attributes = {
             intelligence: config.intelligence || CONFIG.ATTRIBUTES.defaultValue,
             constitution: config.constitution || CONFIG.ATTRIBUTES.defaultValue,
             charisma: config.charisma || CONFIG.ATTRIBUTES.defaultValue,
-            luck: config.luck || CONFIG.ATTRIBUTES.defaultValue
+            luck: config.luck || CONFIG.ATTRIBUTES.defaultValue,
+            morality: config.morality || CONFIG.ATTRIBUTES.defaultValue
         };
         
-        // 初始属性记录（用于成就判定）
         this.initialAttributes = { ...this.attributes };
-        
-        // 历史最高属性
         this.maxAttributes = { ...this.attributes };
-        
-        // 历史最低属性（用于成就判定）
         this.minAttributes = { ...this.attributes };
         
-        // 人生阶段
         this.lifeStage = CONFIG.LIFE_STAGES[0];
         
-        // 事件统计
         this.eventsCount = 0;
         this.eventHistory = [];
         
-        // 游戏状态
         this.isAlive = true;
         this.isPaused = false;
         
-        // 星座加成
         this.zodiacBonus = config.zodiacBonus || {};
-        
-        // 天赋
         this.talents = config.talents || [];
+        
+        this.health = 50;
+        this.maxHealth = 50;
+        
+        this.flags = {};
+        this.relationships = {};
+        this.achievements = [];
+        
+        this.education = { level: 0, major: null, school: null };
+        this.career = { job: null, position: null, company: null, years: 0 };
+        this.family = { married: false, spouse: null, children: 0, parents: true };
+        
+        this.stats = {
+            totalEarnings: 0,
+            totalSpending: 0,
+            eventsTriggered: {},
+            choicesMade: {},
+            chainsCompleted: [],
+            luckyEvents: 0,
+            unluckyEvents: 0
+        };
     }
 
     /**
@@ -87,18 +98,91 @@ class Player {
         if (!this.isAlive) return false;
         
         this.age += years;
+        this.year += years;
         
-        // 检查是否超过最大年龄
         if (this.age >= CONFIG.GAME.maxAge) {
             this.age = CONFIG.GAME.maxAge;
             this.die('自然老死');
             return true;
         }
         
-        // 更新人生阶段
         this.updateLifeStage();
+        this.updateMaxHealth();
+        this.applyAnnualHealthDecay();
         
         return true;
+    }
+
+    /**
+     * 更新最大生命值
+     */
+    updateMaxHealth() {
+        this.maxHealth = Utils.calculateMaxHealth(this.attributes.constitution, this.age);
+    }
+
+    /**
+     * 应用每年生命值自然衰减
+     */
+    applyAnnualHealthDecay() {
+        const decay = Utils.calculateAnnualHealthDecay(this.age);
+        this.health = Math.max(0, this.health - decay);
+        
+        if (this.health <= 0) {
+            this.die('因健康衰竭去世');
+        }
+    }
+
+    /**
+     * 改变生命值
+     * @param {number} amount - 变化值（正数增加，负数减少）
+     * @param {string} reason - 变化原因
+     * @returns {boolean} 是否存活
+     */
+    changeHealth(amount, reason = '未知') {
+        this.health = Math.max(0, Math.min(this.maxHealth, this.health + amount));
+        
+        if (this.health <= 0) {
+            this.die(reason);
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 设置flag
+     * @param {string} flag - flag名称
+     * @param {*} value - flag值
+     */
+    setFlag(flag, value = true) {
+        this.flags[flag] = value;
+    }
+
+    /**
+     * 检查flag
+     * @param {string} flag - flag名称
+     * @returns {boolean} flag是否存在
+     */
+    hasFlag(flag) {
+        return !!this.flags[flag];
+    }
+
+    /**
+     * 更新关系
+     * @param {string} characterId - 角色ID
+     * @param {number} change - 变化值
+     * @param {string} reason - 原因
+     */
+    updateRelationship(characterId, change, reason = '') {
+        if (!this.relationships[characterId]) {
+            this.relationships[characterId] = { level: 50, history: [] };
+        }
+        this.relationships[characterId].level = Math.max(0, Math.min(100, 
+            this.relationships[characterId].level + change));
+        this.relationships[characterId].history.push({
+            change,
+            reason,
+            year: this.year
+        });
     }
 
     /**
@@ -202,13 +286,44 @@ class Player {
      */
     recordEvent(event, choice) {
         this.eventsCount++;
-        this.eventHistory.push({
+        
+        const eventRecord = {
             eventId: event.id,
             eventTitle: event.title,
             choice: choice.text,
             age: this.age,
-            effects: choice.effects
-        });
+            year: this.year,
+            effects: choice.effects || {},
+            tags: event.tags || {}
+        };
+        
+        this.eventHistory.push(eventRecord);
+        
+        if (this.stats.eventsTriggered[event.id] !== undefined) {
+            this.stats.eventsTriggered[event.id]++;
+        } else {
+            this.stats.eventsTriggered[event.id] = 1;
+        }
+        
+        if (choice.text) {
+            if (this.stats.choicesMade[choice.text] !== undefined) {
+                this.stats.choicesMade[choice.text]++;
+            } else {
+                this.stats.choicesMade[choice.text] = 1;
+            }
+        }
+    }
+
+    /**
+     * 记录正向/负向事件统计
+     * @param {string} type - lucky 或 unlucky
+     */
+    recordLuckEvent(type) {
+        if (type === 'lucky') {
+            this.stats.luckyEvents++;
+        } else if (type === 'unlucky') {
+            this.stats.unluckyEvents++;
+        }
     }
 
     /**
@@ -229,13 +344,20 @@ class Player {
             name: this.name,
             gender: this.gender,
             age: this.age,
+            year: this.year,
             stage: this.lifeStage.name,
             attributes: { ...this.attributes },
             maxAttributes: { ...this.maxAttributes },
+            health: this.health,
+            maxHealth: this.maxHealth,
             money: this.money,
             totalMoney: this.totalMoney,
             eventsCount: this.eventsCount,
-            isAlive: this.isAlive
+            isAlive: this.isAlive,
+            flags: { ...this.flags },
+            education: { ...this.education },
+            career: { ...this.career },
+            family: { ...this.family }
         };
     }
 
@@ -248,15 +370,27 @@ class Player {
             name: this.name,
             gender: this.gender,
             age: this.age,
+            year: this.year,
             money: this.money,
             totalMoney: this.totalMoney,
             attributes: { ...this.attributes },
             maxAttributes: { ...this.maxAttributes },
+            minAttributes: { ...this.minAttributes },
             lifeStage: this.lifeStage,
             eventsCount: this.eventsCount,
             eventHistory: this.eventHistory,
             isAlive: this.isAlive,
-            zodiacBonus: this.zodiacBonus
+            deathReason: this.deathReason,
+            zodiacBonus: this.zodiacBonus,
+            health: this.health,
+            maxHealth: this.maxHealth,
+            flags: { ...this.flags },
+            relationships: { ...this.relationships },
+            achievements: [...this.achievements],
+            education: { ...this.education },
+            career: { ...this.career },
+            family: { ...this.family },
+            stats: { ...this.stats }
         };
     }
 
@@ -273,17 +407,31 @@ class Player {
             constitution: data.attributes.constitution,
             charisma: data.attributes.charisma,
             luck: data.attributes.luck,
+            morality: data.attributes.morality,
             zodiacBonus: data.zodiacBonus
         });
         
         player.age = data.age;
+        player.year = data.year;
         player.money = data.money;
         player.totalMoney = data.totalMoney;
         player.maxAttributes = { ...data.maxAttributes };
+        player.minAttributes = data.minAttributes ? { ...data.minAttributes } : { ...player.initialAttributes };
         player.lifeStage = data.lifeStage;
         player.eventsCount = data.eventsCount;
         player.eventHistory = data.eventHistory || [];
         player.isAlive = data.isAlive;
+        player.deathReason = data.deathReason;
+        
+        if (data.health !== undefined) player.health = data.health;
+        if (data.maxHealth !== undefined) player.maxHealth = data.maxHealth;
+        if (data.flags) player.flags = { ...data.flags };
+        if (data.relationships) player.relationships = { ...data.relationships };
+        if (data.achievements) player.achievements = [...data.achievements];
+        if (data.education) player.education = { ...data.education };
+        if (data.career) player.career = { ...data.career };
+        if (data.family) player.family = { ...data.family };
+        if (data.stats) player.stats = { ...data.stats };
         
         return player;
     }
