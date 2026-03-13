@@ -1,189 +1,15 @@
 /**
- * 游戏主配置文件
- * 包含游戏常量、系统参数和配置数据
- * @module config
+ * 工具函数模块
+ * 提供通用的辅助函数和计算逻辑
+ * @module utils
  */
 
-/**
- * 游戏核心配置
- * @type {Object}
- */
-export const CONFIG = Object.freeze({
-    VERSION: '2.0.0',
-    
-    DEBUG: false,
-    
-    // 属性配置
-    ATTRIBUTES: Object.freeze({
-        // 属性名称映射（用于显示）
-        names: Object.freeze({
-            intelligence: '智力',
-            constitution: '体质',
-            charisma: '魅力',
-            luck: '运气',
-            morality: '道德'
-        }),
-        // 属性图标映射
-        icons: Object.freeze({
-            intelligence: '💡',
-            constitution: '💪',
-            charisma: '😊',
-            luck: '🍀',
-            morality: '⚖️'
-        }),
-        // 属性说明（用于属性分配界面）
-        descriptions: Object.freeze({
-            intelligence: '影响学习能力、职业发展和决策质量',
-            constitution: '决定生命值上限、疾病抵抗力和体力',
-            charisma: '影响社交成功率、人际关系和 NPC 态度',
-            luck: '调控随机事件触发和意外结果',
-            morality: '影响剧情选项、NPC 信任度和结局评价'
-        }),
-        // 属性初始值
-        defaultValue: 5,
-        // 属性最小值
-        minValue: 1,
-        // 属性最大值
-        maxValue: 10,
-        // 可分配的属性点
-        initialPoints: 10,
-        // 最低分配值
-        minInitialValue: 3
-    }),
-    
-    // 人生阶段配置
-    LIFE_STAGES: Object.freeze([
-        { id: 'baby', name: '婴儿期', minAge: 0, maxAge: 3, icon: '👶' },
-        { id: 'child', name: '童年期', minAge: 4, maxAge: 12, icon: '🧒' },
-        { id: 'teen', name: '少年期', minAge: 13, maxAge: 18, icon: '👦' },
-        { id: 'young', name: '青年期', minAge: 19, maxAge: 35, icon: '👨' },
-        { id: 'middle', name: '中年期', minAge: 36, maxAge: 55, icon: '👨‍🦰' },
-        { id: 'elder', name: '老年期', minAge: 56, maxAge: 100, icon: '👴' }
-    ]),
-    
-    // 游戏配置
-    GAME: Object.freeze({
-        // 最大年龄
-        maxAge: 100,
-        // 默认初始金钱
-        initialMoney: 1000,
-        // 每年触发事件的最小间隔（岁）
-        eventMinInterval: 1,
-        // 每年触发事件的最大间隔（岁）
-        eventMaxInterval: 3,
-        // 事件触发基础概率
-        eventBaseProbability: 0.7,
-        // 自动播放间隔（毫秒）
-        autoPlayInterval: 2000,
-        // 快速播放间隔（毫秒）
-        fastPlayInterval: 500
-    }),
-    
-    // 性别配置
-    GENDERS: Object.freeze({
-        male: Object.freeze({ name: '男', icon: '♂', avatarEmoji: '👦' }),
-        female: Object.freeze({ name: '女', icon: '♀', avatarEmoji: '👧' }),
-        other: Object.freeze({ name: '其他', icon: '⚥', avatarEmoji: '🧑' })
-    }),
-    
-    // 星座配置（影响初始属性加成）
-    ZODIAC: Object.freeze({
-        // 火象星座 - 体质加成
-        fire: Object.freeze({
-            name: '白羊座',
-            date: '3.21-4.19',
-            bonus: Object.freeze({ constitution: 1 }),
-            emoji: '🐏'
-        }),
-        leo: Object.freeze({
-            name: '狮子座',
-            date: '7.23-8.22',
-            bonus: Object.freeze({ charisma: 1 }),
-            emoji: '🦁'
-        }),
-        sagittarius: Object.freeze({
-            name: '射手座',
-            date: '11.22-12.21',
-            bonus: Object.freeze({ luck: 1 }),
-            emoji: '🏹'
-        }),
-        // 土象星座 - 智力加成
-        taurus: Object.freeze({
-            name: '金牛座',
-            date: '4.20-5.20',
-            bonus: Object.freeze({ intelligence: 1 }),
-            emoji: '🐂'
-        }),
-        virgo: Object.freeze({
-            name: '处女座',
-            date: '8.23-9.22',
-            bonus: Object.freeze({ intelligence: 1 }),
-            emoji: '👸'
-        }),
-        capricorn: Object.freeze({
-            name: '摩羯座',
-            date: '12.22-1.19',
-            bonus: Object.freeze({ constitution: 1 }),
-            emoji: '🐐'
-        }),
-        // 风象星座 - 魅力加成
-        gemini: Object.freeze({
-            name: '双子座',
-            date: '5.21-6.21',
-            bonus: Object.freeze({ charisma: 1 }),
-            emoji: '👯'
-        }),
-        libra: Object.freeze({
-            name: '天秤座',
-            date: '9.23-10.23',
-            bonus: Object.freeze({ charisma: 1 }),
-            emoji: '⚖️'
-        }),
-        aquarius: Object.freeze({
-            name: '水瓶座',
-            date: '1.20-2.18',
-            bonus: Object.freeze({ luck: 1 }),
-            emoji: '🏺'
-        }),
-        // 水象星座 - 运气加成
-        cancer: Object.freeze({
-            name: '巨蟹座',
-            date: '6.22-7.22',
-            bonus: Object.freeze({ luck: 1 }),
-            emoji: '🦀'
-        }),
-        scorpio: Object.freeze({
-            name: '天蝎座',
-            date: '10.24-11.21',
-            bonus: Object.freeze({ constitution: 1 }),
-            emoji: '🦂'
-        }),
-        pisces: Object.freeze({
-            name: '双鱼座',
-            date: '2.19-3.20',
-            bonus: Object.freeze({ charisma: 1 }),
-            emoji: '🐟'
-        })
-    }),
-    
-    // 存档配置
-    SAVE: Object.freeze({
-        key: 'lifeRestart_saveData',
-        maxSlots: 3
-    }),
-    
-    // 动画配置
-    ANIMATION: Object.freeze({
-        fadeInDuration: 300,
-        fadeOutDuration: 300,
-        transitionDuration: 500
-    })
-});
+import { CONFIG } from './config.js';
 
 /**
  * 工具函数集合
  */
-const Utils = {
+export const Utils = Object.freeze({
     /**
      * 生成指定范围内的随机整数
      * @param {number} min - 最小值
@@ -207,7 +33,7 @@ const Utils = {
     /**
      * 根据权重随机选择
      * @param {Array} items - 选项数组
-     * @param {Array} weights - 权重数组
+     * @param {Array<number>} weights - 权重数组
      * @returns {*} 选中的选项
      */
     weightedRandom: function(items, weights) {
@@ -225,8 +51,9 @@ const Utils = {
     
     /**
      * 深拷贝对象
-     * @param {*} obj - 要拷贝的对象
-     * @returns {*} 拷贝后的对象
+     * @template T
+     * @param {T} obj - 要拷贝的对象
+     * @returns {T} 拷贝后的对象
      */
     deepClone: function(obj) {
         return JSON.parse(JSON.stringify(obj));
@@ -267,7 +94,7 @@ const Utils = {
     },
     
     /**
-     * XSS过滤 - 转义HTML特殊字符
+     * XSS 过滤 - 转义 HTML 特殊字符
      * @param {string} str - 要过滤的字符串
      * @returns {string} 过滤后的安全字符串
      */
@@ -379,8 +206,8 @@ const Utils = {
 
     /**
      * 根据属性判断是否能解锁选项
-     * @param {Object} requiredAttrs - 需要的属性 {attr: value}
-     * @param {Object} playerAttrs - 玩家当前属性
+     * @param {Object<string, number|Object>} requiredAttrs - 需要的属性 {attr: value}
+     * @param {Object<string, number>} playerAttrs - 玩家当前属性
      * @returns {boolean} 是否满足条件
      */
     checkAttributeRequirements: function(requiredAttrs, playerAttrs) {
@@ -400,7 +227,7 @@ const Utils = {
 
     /**
      * 计算最终评分（用于结局判定）
-     * @param {Object} attributes - 五大属性
+     * @param {Object<string, number>} attributes - 五大属性
      * @param {Object} stats - 游戏统计数据
      * @returns {number} 最终评分
      */
@@ -419,4 +246,4 @@ const Utils = {
         
         return Math.round(score);
     }
-};
+});

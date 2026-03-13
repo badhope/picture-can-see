@@ -1,4 +1,94 @@
 /**
+ * 事件总线系统
+ * 实现发布/订阅模式，用于解耦组件间的通信
+ */
+export class EventBus {
+    constructor() {
+        /** @type {Map<string, Array<Function>>} */
+        this.listeners = new Map();
+    }
+
+    /**
+     * 订阅事件
+     * @param {string} event - 事件名称
+     * @param {Function} callback - 回调函数
+     */
+    on(event, callback) {
+        if (!this.listeners.has(event)) {
+            this.listeners.set(event, []);
+        }
+        this.listeners.get(event).push(callback);
+    }
+
+    /**
+     * 取消订阅事件
+     * @param {string} event - 事件名称
+     * @param {Function} callback - 要移除的回调函数
+     */
+    off(event, callback) {
+        if (this.listeners.has(event)) {
+            const callbacks = this.listeners.get(event);
+            const index = callbacks.indexOf(callback);
+            if (index !== -1) {
+                callbacks.splice(index, 1);
+            }
+            if (callbacks.length === 0) {
+                this.listeners.delete(event);
+            }
+        }
+    }
+
+    /**
+     * 发布事件
+     * @param {string} event - 事件名称
+     * @param {*} data - 传递的数据
+     */
+    emit(event, data) {
+        if (this.listeners.has(event)) {
+            // 创建回调函数副本，防止在执行过程中被修改
+            const callbacks = [...this.listeners.get(event)];
+            callbacks.forEach(callback => {
+                try {
+                    callback(data);
+                } catch (error) {
+                    console.error(`Error in event listener for ${event}:`, error);
+                }
+            });
+        }
+    }
+
+    /**
+     * 清空所有事件监听器
+     */
+    clear() {
+        this.listeners.clear();
+    }
+}
+
+/**
+ * 游戏事件常量
+ */
+export const GameEvents = {
+    // 游戏状态相关
+    GAME_START: 'game:start',
+    GAME_PAUSE: 'game:pause',
+    GAME_RESUME: 'game:resume',
+    GAME_OVER: 'game:over',
+    
+    // 玩家状态相关
+    PLAYER_CREATED: 'player:created',
+    PLAYER_AGE_CHANGED: 'player:ageChanged',
+    PLAYER_STAGE_CHANGED: 'player:stageChanged',
+    PLAYER_ATTRIBUTE_CHANGED: 'player:attributeChanged',
+    PLAYER_HEALTH_CHANGED: 'player:healthChanged',
+    PLAYER_MONEY_CHANGED: 'player:moneyChanged',
+    
+    // 事件系统相关
+    EVENT_TRIGGERED: 'event:triggered',
+    EVENT_CHOICE_MADE: 'event:choiceMade',
+    STORY_PROGRESS: 'story:progress'
+};
+/**
  * 游戏引擎
  * 核心游戏循环和流程控制
  * 整合时间轴事件和逻辑链系统

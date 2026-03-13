@@ -572,19 +572,28 @@
         </div>
     </div>
 
-    <!-- 核心 JS 文件 -->
-    <script src="js/config.js"></script>
-    <script src="js/utils/performance.js"></script>
-    <script src="js/utils/objectPool.js"></script>
-    <script src="js/core/player.js"></script>
-    <script src="js/core/eventSystem.js"></script>
-    <script src="js/core/storyEngine.js"></script>
-    <script src="js/core/gameEngine.js"></script>
+    <!-- 核心 JS 文件 - 使用模块化 -->
+    <script type="module" src="js/main.js"></script>
+    
+    <!-- 配置和工具 -->
+    <script type="module" src="js/config.js"></script>
+    <script type="module" src="js/utils/performance.js"></script>
+    <script type="module" src="js/utils/objectPool.js"></script>
+    
+    <!-- 核心模块 -->
+    <script type="module" src="js/core/player.js"></script>
+    <script type="module" src="js/core/eventSystem.js"></script>
+    <script type="module" src="js/core/storyEngine.js"></script>
+    <script type="module" src="js/core/gameEngine.js"></script>
+    
+    <!-- UI 管理 -->
     <script src="js/ui/screenManager.js"></script>
     <script src="js/ui/animation.js"></script>
+    
+    <!-- 工具函数 -->
     <script src="js/utils/saveSystem.js"></script>
     
-    <!-- 数据文件 -->
+    <!-- 数据文件 (保持全局变量) -->
     <script src="js/data/storyConfig.js"></script>
     <script src="js/data/storyEvents.js"></script>
     <script src="js/data/events.js"></script>
@@ -593,21 +602,8 @@
     <script src="js/data/chains.js"></script>
     <script src="js/data/endings.js"></script>
     
-    <!-- 游戏主入口 -->
-    <script src="js/main.js"></script>
-    
     <!-- 性能优化脚本 -->
     <script>
-        // 初始化性能监控
-        if (typeof PerformanceUtils !== 'undefined') {
-            PerformanceUtils.init();
-        }
-        
-        // 初始化错误处理
-        if (typeof ErrorHandler !== 'undefined') {
-            ErrorHandler.init();
-        }
-        
         // 预加载关键资源
         if (typeof LoadOptimizer !== 'undefined') {
             LoadOptimizer.preloadCriticalResources();

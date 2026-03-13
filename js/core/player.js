@@ -1,21 +1,48 @@
 /**
- * 玩家类
+ * 玩家类模块
  * 管理角色的所有属性、状态和行为
+ * @module core/Player
  */
 
-class Player {
+import { CONFIG } from '../config.js';
+import { Utils } from '../utils.js';
+
+/**
+ * 玩家类
+ * 表示游戏中的角色实例
+ */
+export class Player {
     /**
      * 创建玩家对象
      * @param {Object} config - 初始配置
+     * @param {string} [config.name='玩家'] - 玩家名称
+     * @param {string} [config.gender='male'] - 性别
+     * @param {number} [config.intelligence=5] - 智力属性
+     * @param {number} [config.constitution=5] - 体质属性
+     * @param {number} [config.charisma=5] - 魅力属性
+     * @param {number} [config.luck=5] - 运气属性
+     * @param {number} [config.morality=5] - 道德属性
+     * @param {Object<string, number>} [config.zodiacBonus={}] - 星座加成
+     * @param {Array} [config.talents=[]] - 天赋数组
      */
     constructor(config = {}) {
-        this.name = config.name || '玩家';
-        this.gender = config.gender || 'male';
-        this.age = 0;
-        this.year = 2006;
-        this.money = CONFIG.GAME.initialMoney;
-        this.totalMoney = 0;
+        /** @private */
+        this._name = config.name || '玩家';
+        /** @private */
+        this._gender = config.gender || 'male';
+        /** @private */
+        this._age = 0;
+        /** @private */
+        this._year = 2006;
+        /** @private */
+        this._money = CONFIG.GAME.initialMoney;
+        /** @private */
+        this._totalMoney = 0;
         
+        /**
+         * 属性对象
+         * @type {Object<string, number>}
+         */
         this.attributes = {
             intelligence: config.intelligence || CONFIG.ATTRIBUTES.defaultValue,
             constitution: config.constitution || CONFIG.ATTRIBUTES.defaultValue,
@@ -24,32 +51,51 @@ class Player {
             morality: config.morality || CONFIG.ATTRIBUTES.defaultValue
         };
         
+        /** @type {Object<string, number>} */
         this.initialAttributes = { ...this.attributes };
+        /** @type {Object<string, number>} */
         this.maxAttributes = { ...this.attributes };
+        /** @type {Object<string, number>} */
         this.minAttributes = { ...this.attributes };
         
+        /** @type {Object} */
         this.lifeStage = CONFIG.LIFE_STAGES[0];
         
-        this.eventsCount = 0;
+        /** @private */
+        this._eventsCount = 0;
+        /** @type {Array} */
         this.eventHistory = [];
         
+        /** @type {boolean} */
         this.isAlive = true;
+        /** @type {boolean} */
         this.isPaused = false;
         
+        /** @type {Object<string, number>} */
         this.zodiacBonus = config.zodiacBonus || {};
+        /** @type {Array} */
         this.talents = config.talents || [];
         
+        /** @type {number} */
         this.health = 50;
+        /** @type {number} */
         this.maxHealth = 50;
         
+        /** @type {Object<string, *>} */
         this.flags = {};
+        /** @type {Object<string, Object>} */
         this.relationships = {};
+        /** @type {Array} */
         this.achievements = [];
         
+        /** @type {Object} */
         this.education = { level: 0, major: null, school: null };
+        /** @type {Object} */
         this.career = { job: null, position: null, company: null, years: 0 };
+        /** @type {Object} */
         this.family = { married: false, spouse: null, children: 0, parents: true };
         
+        /** @type {Object} */
         this.stats = {
             totalEarnings: 0,
             totalSpending: 0,
@@ -62,7 +108,72 @@ class Player {
     }
 
     /**
+     * 获取玩家名称
+     * @type {string}
+     */
+    get name() {
+        return this._name;
+    }
+
+    /**
+     * 设置玩家名称
+     * @param {string} value - 新的名称
+     */
+    set name(value) {
+        this._name = Utils.sanitizePlayerName(value);
+    }
+
+    /**
+     * 获取性别
+     * @type {string}
+     */
+    get gender() {
+        return this._gender;
+    }
+
+    /**
+     * 获取年龄
+     * @type {number}
+     */
+    get age() {
+        return this._age;
+    }
+
+    /**
+     * 获取年份
+     * @type {number}
+     */
+    get year() {
+        return this._year;
+    }
+
+    /**
+     * 获取金钱
+     * @type {number}
+     */
+    get money() {
+        return this._money;
+    }
+
+    /**
+     * 获取总金钱
+     * @type {number}
+     */
+    get totalMoney() {
+        return this._totalMoney;
+    }
+
+    /**
+     * 获取事件数量
+     * @type {number}
+     */
+    get eventsCount() {
+        return this._eventsCount;
+    }
+
+    /**
      * 应用星座属性加成
+     * @returns {void}
      */
     applyZodiacBonus() {
         for (const attr in this.zodiacBonus) {
@@ -80,6 +191,7 @@ class Player {
 
     /**
      * 更新最高属性记录
+     * @returns {void}
      */
     updateMaxAttributes() {
         for (const attr in this.attributes) {
@@ -91,17 +203,17 @@ class Player {
 
     /**
      * 增加年龄
-     * @param {number} years - 增加的年数
+     * @param {number} [years=1] - 增加的年数
      * @returns {boolean} 是否成功
      */
     addAge(years = 1) {
         if (!this.isAlive) return false;
         
-        this.age += years;
-        this.year += years;
+        this._age += years;
+        this._year += years;
         
-        if (this.age >= CONFIG.GAME.maxAge) {
-            this.age = CONFIG.GAME.maxAge;
+        if (this._age >= CONFIG.GAME.maxAge) {
+            this._age = CONFIG.GAME.maxAge;
             this.die('自然老死');
             return true;
         }
@@ -115,6 +227,7 @@ class Player {
 
     /**
      * 更新最大生命值
+     * @returns {void}
      */
     updateMaxHealth() {
         this.maxHealth = Utils.calculateMaxHealth(this.attributes.constitution, this.age);
@@ -122,6 +235,7 @@ class Player {
 
     /**
      * 应用每年生命值自然衰减
+     * @returns {void}
      */
     applyAnnualHealthDecay() {
         const decay = Utils.calculateAnnualHealthDecay(this.age);
@@ -135,7 +249,7 @@ class Player {
     /**
      * 改变生命值
      * @param {number} amount - 变化值（正数增加，负数减少）
-     * @param {string} reason - 变化原因
+     * @param {string} [reason='未知'] - 变化原因
      * @returns {boolean} 是否存活
      */
     changeHealth(amount, reason = '未知') {
@@ -149,18 +263,19 @@ class Player {
     }
 
     /**
-     * 设置flag
-     * @param {string} flag - flag名称
-     * @param {*} value - flag值
+     * 设置 flag
+     * @param {string} flag - flag 名称
+     * @param {*} [value=true] - flag 值
+     * @returns {void}
      */
     setFlag(flag, value = true) {
         this.flags[flag] = value;
     }
 
     /**
-     * 检查flag
-     * @param {string} flag - flag名称
-     * @returns {boolean} flag是否存在
+     * 检查 flag
+     * @param {string} flag - flag 名称
+     * @returns {boolean} flag 是否存在
      */
     hasFlag(flag) {
         return !!this.flags[flag];
@@ -168,9 +283,10 @@ class Player {
 
     /**
      * 更新关系
-     * @param {string} characterId - 角色ID
+     * @param {string} characterId - 角色 ID
      * @param {number} change - 变化值
-     * @param {string} reason - 原因
+     * @param {string} [reason=''] - 原因
+     * @returns {void}
      */
     updateRelationship(characterId, change, reason = '') {
         if (!this.relationships[characterId]) {
@@ -187,6 +303,7 @@ class Player {
 
     /**
      * 更新人生阶段
+     * @returns {boolean} 阶段是否发生变化
      */
     updateLifeStage() {
         const newStage = Utils.getLifeStage(this.age);
@@ -199,8 +316,8 @@ class Player {
 
     /**
      * 应用属性变化
-     * @param {Object} effects - 效果对象
-     * @returns {Object} 实际应用的效果
+     * @param {Object<string, number>} effects - 效果对象
+     * @returns {Object<string, number>} 实际应用的效果
      */
     applyEffects(effects) {
         const applied = {};
@@ -237,16 +354,16 @@ class Player {
         // 处理金钱变化
         if (effects.money !== undefined) {
             const moneyChange = effects.money;
-            this.money += moneyChange;
+            this._money += moneyChange;
             if (moneyChange > 0) {
-                this.totalMoney += moneyChange;
+                this._totalMoney += moneyChange;
             }
             applied.money = moneyChange;
         }
         
         // 处理消费
         if (effects.cost !== undefined) {
-            this.money -= Math.abs(effects.cost);
+            this._money -= Math.abs(effects.cost);
             applied.cost = -Math.abs(effects.cost);
         }
         
@@ -261,8 +378,8 @@ class Player {
     addMoney(amount) {
         if (amount <= 0) return false;
         
-        this.money += amount;
-        this.totalMoney += amount;
+        this._money += amount;
+        this._totalMoney += amount;
         return true;
     }
 
@@ -273,9 +390,9 @@ class Player {
      */
     spendMoney(amount) {
         if (amount <= 0) return false;
-        if (this.money < amount) return false;
+        if (this._money < amount) return false;
         
-        this.money -= amount;
+        this._money -= amount;
         return true;
     }
 
@@ -283,9 +400,10 @@ class Player {
      * 记录事件
      * @param {Object} event - 事件对象
      * @param {Object} choice - 选择的选项
+     * @returns {void}
      */
     recordEvent(event, choice) {
-        this.eventsCount++;
+        this._eventsCount++;
         
         const eventRecord = {
             eventId: event.id,
@@ -316,7 +434,8 @@ class Player {
 
     /**
      * 记录正向/负向事件统计
-     * @param {string} type - lucky 或 unlucky
+     * @param {'lucky'|'unlucky'} type - lucky 或 unlucky
+     * @returns {void}
      */
     recordLuckEvent(type) {
         if (type === 'lucky') {
@@ -328,7 +447,8 @@ class Player {
 
     /**
      * 死亡
-     * @param {string} reason - 死亡原因
+     * @param {string} [reason='未知原因'] - 死亡原因
+     * @returns {void}
      */
     die(reason = '未知原因') {
         this.isAlive = false;
@@ -396,6 +516,7 @@ class Player {
 
     /**
      * 从存档数据恢复玩家
+     * @static
      * @param {Object} data - 存档数据
      * @returns {Player} 玩家对象
      */
@@ -411,14 +532,14 @@ class Player {
             zodiacBonus: data.zodiacBonus
         });
         
-        player.age = data.age;
-        player.year = data.year;
-        player.money = data.money;
-        player.totalMoney = data.totalMoney;
+        player._age = data.age;
+        player._year = data.year;
+        player._money = data.money;
+        player._totalMoney = data.totalMoney;
         player.maxAttributes = { ...data.maxAttributes };
         player.minAttributes = data.minAttributes ? { ...data.minAttributes } : { ...player.initialAttributes };
         player.lifeStage = data.lifeStage;
-        player.eventsCount = data.eventsCount;
+        player._eventsCount = data.eventsCount;
         player.eventHistory = data.eventHistory || [];
         player.isAlive = data.isAlive;
         player.deathReason = data.deathReason;

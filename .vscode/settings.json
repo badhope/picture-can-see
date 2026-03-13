@@ -1,0 +1,6 @@
+{
+    "Lingma.cloudModelAutoTriggerGenerateLength": "long",
+    "Lingma.cloudModelManualTriggerGenerateLength": "long",
+    "Lingma.localMachineModel": true,
+    "Lingma.aI Chat.mcpToolsInAgentMode": true
+}
