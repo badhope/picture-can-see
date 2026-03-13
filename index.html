@@ -6,9 +6,57 @@
     <meta name="description" content="人生重开模拟器 - 一款让你体验不同人生选择的人生模拟游戏">
     <meta name="theme-color" content="#6366f1">
     <title>人生重开模拟器 | Life Restart</title>
+    
+    <!-- 预加载关键资源 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" href="css/glassmorphism.css" as="style">
+    <link rel="preload" href="css/style.css" as="style">
+    <link rel="preload" href="js/config.js" as="script">
+    
+    <!-- 字体加载 -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- 关键 CSS 内联 - 首屏渲染优化 -->
+    <style>
+        /* 关键帧动画 */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes slideOutRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+        
+        /* 加载屏幕基础样式 */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+        
+        .loading-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        /* 性能优化：GPU 加速 */
+        .glass, .glass-card, .glass-button {
+            will-change: transform, opacity;
+        }
+        
+        /* 减少重排重绘 */
+        * {
+            box-sizing: border-box;
+        }
+    </style>
+    
+    <!-- 样式文件 -->
     <link rel="stylesheet" href="css/glassmorphism.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>">
@@ -526,6 +574,8 @@
 
     <!-- 核心 JS 文件 -->
     <script src="js/config.js"></script>
+    <script src="js/utils/performance.js"></script>
+    <script src="js/utils/objectPool.js"></script>
     <script src="js/core/player.js"></script>
     <script src="js/core/eventSystem.js"></script>
     <script src="js/core/storyEngine.js"></script>
@@ -545,5 +595,30 @@
     
     <!-- 游戏主入口 -->
     <script src="js/main.js"></script>
+    
+    <!-- 性能优化脚本 -->
+    <script>
+        // 初始化性能监控
+        if (typeof PerformanceUtils !== 'undefined') {
+            PerformanceUtils.init();
+        }
+        
+        // 初始化错误处理
+        if (typeof ErrorHandler !== 'undefined') {
+            ErrorHandler.init();
+        }
+        
+        // 预加载关键资源
+        if (typeof LoadOptimizer !== 'undefined') {
+            LoadOptimizer.preloadCriticalResources();
+        }
+        
+        // 页面加载完成后初始化懒加载
+        window.addEventListener('load', function() {
+            if (typeof LoadOptimizer !== 'undefined') {
+                LoadOptimizer.lazyLoadResources();
+            }
+        });
+    </script>
 </body>
 </html>
