@@ -10,6 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/glassmorphism.css">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>">
 </head>
 <body>
@@ -45,33 +46,32 @@
             <div id="title-screen" class="screen active" data-screen="title">
                 <div class="title-wrapper">
                     <div class="title-logo">
-                        <div class="logo-icon">🎮</div>
+                        <div class="logo-icon glass-card">🎮</div>
                         <div class="logo-ring"></div>
                     </div>
-                    <h1 class="game-title">
+                    <h1 class="game-title text-h1">
                         <span class="title-main">人生重开</span>
                         <span class="title-sub">模拟器</span>
                     </h1>
-                    <p class="game-subtitle">やり直すんだ。そして、次はうまくやる。</p>
+                    <p class="game-subtitle text-body">やり直すんだ。そして、次はうまくやる。</p>
                     <div class="title-actions">
                         <button id="start-game" class="btn btn-primary btn-lg">
                             <span class="btn-icon">🚀</span>
                             <span class="btn-text">开始新人生</span>
-                            <span class="btn-glow"></span>
                         </button>
                         <button id="continue-game" class="btn btn-secondary btn-lg" style="display: none;">
                             <span class="btn-icon">📂</span>
                             <span class="btn-text">继续游戏</span>
                         </button>
-                        <button id="help-btn" class="btn btn-outline btn-lg">
+                        <button id="help-btn" class="btn btn-ghost btn-lg">
                             <span class="btn-icon">❓</span>
                             <span class="btn-text">游戏指南</span>
                         </button>
                     </div>
                     <div class="title-footer">
-                        <div class="version-tag">v1.5.0</div>
+                        <div class="version-tag badge">v1.5.0</div>
                         <div class="stats-preview" id="stats-preview">
-                            <span>👥 已体验 <b id="total-players">0</b> 人</span>
+                            <span class="text-caption">👥 已体验 <b id="total-players">0</b> 人</span>
                         </div>
                     </div>
                 </div>
@@ -79,45 +79,43 @@
 
             <!-- 角色创建画面 -->
             <div id="create-screen" class="screen" data-screen="create">
-                <div class="create-wrapper">
+                <div class="create-wrapper glass">
                     <div class="create-header">
-                        <button class="back-btn" id="back-to-title">
+                        <button class="back-btn glass-button" id="back-to-title">
                             <span>←</span> 返回
                         </button>
-                        <h2>创建角色</h2>
+                        <h2 class="text-h2">创建角色</h2>
                     </div>
                     
                     <div class="create-body">
                         <div class="create-avatar-section">
                             <div class="avatar-preview" id="avatar-preview">
-                                <div class="avatar-circle">
-                                    <span id="preview-avatar">👤</span>
+                                <div class="avatar avatar-lg" id="preview-avatar">
+                                    <span>👤</span>
                                 </div>
-                                <div class="avatar-ring"></div>
                             </div>
                         </div>
 
                         <div class="create-form">
                             <div class="form-section">
-                                <label class="form-label">姓名</label>
+                                <label class="form-label text-caption">姓名</label>
                                 <div class="input-wrapper">
-                                    <input type="text" id="player-name" placeholder="输入你的名字" maxlength="20" autocomplete="off">
-                                    <span class="input-line"></span>
+                                    <input type="text" id="player-name" class="input" placeholder="输入你的名字" maxlength="20" autocomplete="off">
                                 </div>
                             </div>
 
                             <div class="form-section">
-                                <label class="form-label">性别</label>
+                                <label class="form-label text-caption">性别</label>
                                 <div class="gender-select">
-                                    <button class="gender-btn active" data-gender="male">
+                                    <button class="gender-btn glass-button active" data-gender="male">
                                         <span class="gender-icon">♂</span>
                                         <span class="gender-name">男</span>
                                     </button>
-                                    <button class="gender-btn" data-gender="female">
+                                    <button class="gender-btn glass-button" data-gender="female">
                                         <span class="gender-icon">♀</span>
                                         <span class="gender-name">女</span>
                                     </button>
-                                    <button class="gender-btn" data-gender="other">
+                                    <button class="gender-btn glass-button" data-gender="other">
                                         <span class="gender-icon">⚥</span>
                                         <span class="gender-name">其他</span>
                                     </button>
@@ -125,7 +123,7 @@
                             </div>
 
                             <div class="form-section">
-                                <label class="form-label">
+                                <label class="form-label text-caption">
                                     生日星座 
                                     <span class="label-hint">（影响初始属性）</span>
                                 </label>
@@ -134,7 +132,7 @@
                             </div>
 
                             <div class="form-section">
-                                <label class="form-label">
+                                <label class="form-label text-caption">
                                     天赋选择
                                     <span class="label-hint">（选择1-3个天赋）</span>
                                 </label>
@@ -144,10 +142,10 @@
 
                             <div class="form-section">
                                 <div class="attr-header">
-                                    <label class="form-label">属性分配</label>
+                                    <label class="form-label text-caption">属性分配</label>
                                     <div class="points-display">
                                         <span class="points-label">可用点数</span>
-                                        <span class="points-value" id="points-remaining">10</span>
+                                        <span class="points-value badge-primary badge" id="points-remaining">10</span>
                                     </div>
                                 </div>
                                 <div class="attributes-grid">
@@ -242,39 +240,39 @@
 
             <!-- 游戏主界面 -->
             <div id="game-screen" class="screen" data-screen="game">
-                <div class="game-layout">
+                <div class="game-layout glass">
                     <!-- 顶部状态栏 -->
-                    <header class="game-header">
+                    <header class="game-header glass">
                         <div class="header-left">
-                            <div class="player-badge">
+                            <div class="player-badge glass-card">
                                 <span class="player-name" id="player-name-display">玩家</span>
                                 <span class="player-gender" id="player-gender">♂</span>
                             </div>
                         </div>
                         <div class="header-center">
-                            <div class="year-display">
+                            <div class="year-display glass-card">
                                 <span class="year-label">年份</span>
-                                <span class="year-value" id="player-year">2006</span>
+                                <span class="year-value text-h3" id="player-year">2006</span>
                             </div>
-                            <div class="age-display">
+                            <div class="age-display glass-card">
                                 <span class="age-label">年龄</span>
-                                <span class="age-value" id="player-age">0</span>
+                                <span class="age-value text-h2" id="player-age">0</span>
                                 <span class="age-unit">岁</span>
                             </div>
-                            <div class="stage-badge" id="life-stage">
+                            <div class="stage-badge badge-primary" id="life-stage">
                                 <span class="stage-icon">👶</span>
                                 <span class="stage-name">婴儿期</span>
                             </div>
                         </div>
                         <div class="header-right">
-                            <div class="health-display">
+                            <div class="health-display glass-card">
                                 <span class="health-label">生命</span>
-                                <div class="health-bar">
-                                    <div class="health-bar-fill" id="health-bar-fill" style="width: 50%"></div>
+                                <div class="health-bar progress-bar">
+                                    <div class="health-bar-fill progress-fill" id="health-bar-fill" style="width: 50%"></div>
                                 </div>
                                 <span class="health-value" id="health-value">50</span>
                             </div>
-                            <div class="money-badge">
+                            <div class="money-badge glass-card">
                                 <span class="money-icon">💰</span>
                                 <span class="money-value" id="display-money">0</span>
                             </div>
@@ -285,64 +283,60 @@
                     <main class="game-main">
                         <!-- 左侧角色面板 -->
                         <aside class="character-panel">
-                            <div class="panel-card">
-                                <div class="character-avatar" id="character-avatar">
-                                    <div class="avatar-glow"></div>
-                                    <div class="avatar-inner">
-                                        <span id="avatar-emoji">👦</span>
-                                    </div>
+                            <div class="panel-card glass-card">
+                                <div class="character-avatar avatar avatar-lg" id="character-avatar">
+                                    <span id="avatar-emoji">👦</span>
                                 </div>
                                 <div class="character-status">
                                     <div class="status-item">
-                                        <span class="status-icon">📅</span>
                                         <span class="status-label">人生进度</span>
-                                        <div class="progress-bar-mini">
-                                            <div class="progress-fill-mini" id="life-progress" style="width: 0%"></div>
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" id="life-progress" style="width: 0%"></div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="panel-card attributes-panel">
-                                <h3 class="panel-title">属性</h3>
+                            <div class="panel-card glass-card attributes-panel">
+                                <h3 class="panel-title text-h3">属性</h3>
                                 <div class="attrs-list">
                                     <div class="attr-row">
                                         <span class="attr-icon">💡</span>
                                         <span class="attr-name">智力</span>
-                                        <div class="attr-bar-mini">
-                                            <div class="attr-bar-fill-mini" id="display-bar-intelligence" style="width: 50%"></div>
+                                        <div class="attr-bar">
+                                            <div class="attr-fill intelligence" id="display-bar-intelligence" style="width: 50%"></div>
                                         </div>
                                         <span class="attr-num" id="display-intelligence">5</span>
                                     </div>
                                     <div class="attr-row">
                                         <span class="attr-icon">💪</span>
                                         <span class="attr-name">体质</span>
-                                        <div class="attr-bar-mini">
-                                            <div class="attr-bar-fill-mini" id="display-bar-constitution" style="width: 50%"></div>
+                                        <div class="attr-bar">
+                                            <div class="attr-fill constitution" id="display-bar-constitution" style="width: 50%"></div>
                                         </div>
                                         <span class="attr-num" id="display-constitution">5</span>
                                     </div>
                                     <div class="attr-row">
                                         <span class="attr-icon">😊</span>
                                         <span class="attr-name">魅力</span>
-                                        <div class="attr-bar-mini">
-                                            <div class="attr-bar-fill-mini" id="display-bar-charisma" style="width: 50%"></div>
+                                        <div class="attr-bar">
+                                            <div class="attr-fill charisma" id="display-bar-charisma" style="width: 50%"></div>
                                         </div>
                                         <span class="attr-num" id="display-charisma">5</span>
                                     </div>
                                     <div class="attr-row">
                                         <span class="attr-icon">🍀</span>
                                         <span class="attr-name">运气</span>
-                                        <div class="attr-bar-mini">
-                                            <div class="attr-bar-fill-mini" id="display-bar-luck" style="width: 50%"></div>
+                                        <div class="attr-bar">
+                                            <div class="attr-fill luck" id="display-bar-luck" style="width: 50%"></div>
                                         </div>
                                         <span class="attr-num" id="display-luck">5</span>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="panel-card talents-panel" id="talents-panel" style="display: none;">
-                                <h3 class="panel-title">天赋</h3>
+                            <div class="panel-card glass-card talents-panel" id="talents-panel" style="display: none;">
+                                <h3 class="panel-title text-h3">天赋</h3>
                                 <div class="talents-list" id="talents-list">
                                 </div>
                             </div>
@@ -350,13 +344,13 @@
 
                         <!-- 中间事件区域 -->
                         <section class="event-area">
-                            <div class="event-card">
+                            <div class="event-card glass-card">
                                 <div class="event-header">
-                                    <div class="event-badge" id="event-type-badge">随机事件</div>
+                                    <div class="event-badge badge-primary" id="event-type-badge">随机事件</div>
                                 </div>
                                 <div class="event-content" id="event-content">
-                                    <h3 class="event-title" id="event-title">你出生了</h3>
-                                    <p class="event-desc" id="event-text">这是一个全新的开始...</p>
+                                    <h3 class="event-title text-h2" id="event-title">你出生了</h3>
+                                    <p class="event-desc text-body" id="event-text">这是一个全新的开始...</p>
                                     <div class="event-effects" id="event-effects" style="display: none;">
                                     </div>
                                 </div>
@@ -367,29 +361,29 @@
                     </main>
 
                     <!-- 底部控制栏 -->
-                    <footer class="game-footer">
+                    <footer class="game-footer glass">
                         <div class="footer-left">
-                            <button class="control-btn" id="auto-play" title="自动播放">
+                            <button class="control-btn glass-button" id="auto-play" title="自动播放">
                                 <span class="btn-icon">▶</span>
                                 <span class="btn-text">自动</span>
                             </button>
-                            <button class="control-btn" id="speed-control" title="切换速度">
+                            <button class="control-btn glass-button" id="speed-control" title="切换速度">
                                 <span class="btn-icon">⚡</span>
                                 <span class="btn-text">1x</span>
                             </button>
                         </div>
                         <div class="footer-center">
-                            <button class="control-btn btn-highlight" id="next-year" title="下一年">
+                            <button class="control-btn btn-primary btn-lg" id="next-year" title="下一年">
                                 <span class="btn-text">下一年</span>
                                 <span class="btn-icon">⏭</span>
                             </button>
                         </div>
                         <div class="footer-right">
-                            <button class="control-btn" id="save-game" title="保存游戏">
+                            <button class="control-btn glass-button" id="save-game" title="保存游戏">
                                 <span class="btn-icon">💾</span>
                                 <span class="btn-text">存档</span>
                             </button>
-                            <button class="control-btn btn-danger" id="end-life" title="结束人生">
+                            <button class="control-btn glass-button btn-danger" id="end-life" title="结束人生">
                                 <span class="btn-icon">🛑</span>
                                 <span class="btn-text">结束</span>
                             </button>
