@@ -7,13 +7,16 @@ let mainWindow = null;
 const isDev = process.env.NODE_ENV === 'development' || !app.isPackaged;
 
 function createWindow() {
+    const iconPath = path.join(__dirname, 'assets', 'icon.png');
+    const iconOptions = fs.existsSync(iconPath) ? { icon: iconPath } : {};
+    
     mainWindow = new BrowserWindow({
         width: 1400,
         height: 900,
         minWidth: 1000,
         minHeight: 700,
         title: 'Picture Can See - 数据可视化工具',
-        icon: path.join(__dirname, 'assets', 'icon.png'),
+        ...iconOptions,
         webPreferences: {
             nodeIntegration: false,
             contextIsolation: true,

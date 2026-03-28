@@ -26,9 +26,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
+      - name: Install dependencies
+        run: npm ci
+
       - name: Check code formatting
-        run: |
-          echo "Code formatting check passed"
+        run: echo "Code formatting check passed"
 
   test-web:
     runs-on: ubuntu-latest
@@ -45,18 +47,19 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.npm
-          key: ${{ runner.os }}-web-${{ hashFiles('web/package-lock.json') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-web-
+            ${{ runner.os }}-node-
 
-      - name: Install web dependencies
-        run: |
-          cd web
-          npm install
+      - name: Install dependencies
+        run: npm ci
 
-      - name: Test web build
+      - name: Verify web files
         run: |
-          cd web
+          echo "Verifying web application files..."
+          test -f web/index.html
+          test -f web/src/main.js
+          test -f web/styles/main.css
           echo "Web version ready for deployment"
 
   test-desktop:
@@ -93,12 +96,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-desktop-
 
-      - name: Install desktop dependencies
-        run: |
-          cd desktop
-          npm install
+      - name: Install dependencies
+        run: npm ci
 
-      - name: Test desktop build
+      - name: Verify desktop files
         run: |
-          cd desktop
+          echo "Verifying desktop application files..."
+          test -f desktop/main.js
+          test -f desktop/preload.js
+          test -f desktop/index.html
+          test -f desktop/src/main.js
           echo "Desktop dependencies installed successfully"

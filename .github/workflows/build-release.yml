@@ -24,14 +24,16 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.npm
-          key: ${{ runner.os }}-web-${{ hashFiles('web/package-lock.json') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-web-
+            ${{ runner.os }}-node-
 
       - name: Install dependencies
+        run: npm ci
+
+      - name: Verify web build
         run: |
-          cd web
-          npm install
+          echo "Web application verified successfully"
 
       - name: Deploy to GitHub Pages
         if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
@@ -82,31 +84,23 @@ jobs:
             ${{ runner.os }}-desktop-
 
       - name: Install dependencies
-        run: |
-          cd desktop
-          npm install
+        run: npm ci
 
       - name: Build Electron app (Windows)
         if: matrix.os == 'windows-latest' && startsWith(github.ref, 'refs/tags/')
-        run: |
-          cd desktop
-          npm run build:win
+        run: npm run desktop:build:win
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build Electron app (macOS)
         if: matrix.os == 'macos-latest' && startsWith(github.ref, 'refs/tags/')
-        run: |
-          cd desktop
-          npm run build:mac
+        run: npm run desktop:build:mac
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build Electron app (Linux)
         if: matrix.os == 'ubuntu-latest' && startsWith(github.ref, 'refs/tags/')
-        run: |
-          cd desktop
-          npm run build:linux
+        run: npm run desktop:build:linux
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

@@ -58,7 +58,6 @@
           "arch": ["x64"]
         }
       ],
-      "icon": "assets/icon.ico",
       "artifactName": "${productName}-${version}-${arch}-setup.${ext}"
     },
     "mac": {
@@ -72,7 +71,6 @@
           "arch": ["x64", "arm64"]
         }
       ],
-      "icon": "assets/icon.icns",
       "category": "public.app-category.productivity",
       "artifactName": "${productName}-${version}-${arch}.${ext}"
     },
@@ -87,7 +85,6 @@
           "arch": ["x64"]
         }
       ],
-      "icon": "assets/icon.png",
       "category": "Office",
       "artifactName": "${productName}-${version}-${arch}.${ext}"
     },
@@ -95,10 +92,7 @@
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
-      "createStartMenuShortcut": true,
-      "installerIcon": "assets/icon.ico",
-      "uninstallerIcon": "assets/icon.ico",
-      "installerHeaderIcon": "assets/icon.ico"
+      "createStartMenuShortcut": true
     },
     "dmg": {
       "contents": [
