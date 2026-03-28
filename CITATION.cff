@@ -1,0 +1,36 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "Picture Can See"
+version: 1.0.0
+doi: 10.5281/zenodo.XXXXXXX
+date-released: 2024-01-15
+url: "https://github.com/badhope/picture-can-see"
+preferred-citation:
+  type: software
+  authors:
+  - family-names: "Picture Can See Team"
+  title: "Picture Can See"
+  year: 2024
+  url: "https://github.com/badhope/picture-can-see"
+  version: 1.0.0
+  repository-code: "https://github.com/badhope/picture-can-see"
+  license: MIT
+  abstract: "A powerful, intuitive data visualization tool that transforms raw data into beautiful charts with minimal effort. Supports CSV, Excel, JSON, and more. Available as web app and desktop application for Windows, macOS, and Linux."
+keywords:
+  - data-visualization
+  - chart
+  - d3js
+  - electron
+  - cross-platform
+  - open-source
+license: MIT
+repository-code: "https://github.com/badhope/picture-can-see"
+authors:
+  - family-names: "Picture Can See Team"
+contact:
+  - name: "Picture Can See Team"
+    email: "maintainers@picture-can-see.dev"
+identifiers:
+  - type: url
+    value: "https://github.com/badhope/picture-can-see"
+    description: "GitHub Repository"

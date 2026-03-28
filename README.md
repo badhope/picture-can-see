@@ -1,270 +1,412 @@
-# 📊 Picture Can See
+<p align="center">
+  <img src="desktop/assets/icon.svg" alt="Picture Can See Logo" width="128" height="128">
+</p>
 
-[![CI](https://github.com/badhope/picture-can-see/actions/workflows/ci.yml/badge.svg)](https://github.com/badhope/picture-can-see/actions/workflows/ci.yml)
-[![Build & Release](https://github.com/badhope/picture-can-see/actions/workflows/build-release.yml/badge.svg)](https://github.com/badhope/picture-can-see/actions/workflows/build-release.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![GitHub release](https://img.shields.io/github/v/release/badhope/picture-can-see?include_prereleases)](https://github.com/badhope/picture-can-see/releases)
+<h1 align="center">Picture Can See</h1>
 
-一个强大的数据可视化工具，提供 **Web 版**（在线展示）和 **桌面版**（完整功能）两种使用方式。
+<p align="center">
+  <strong>A powerful, intuitive data visualization tool for everyone</strong>
+</p>
 
-[在线演示](#) | [下载桌面版](#-下载安装) | [功能特性](#-核心功能) | [开发文档](#-开发指南)
+<p align="center">
+  <a href="#features">Features</a> •
+  <a href="#installation">Installation</a> •
+  <a href="#quick-start">Quick Start</a> •
+  <a href="#documentation">Documentation</a> •
+  <a href="#contributing">Contributing</a>
+</p>
 
----
+<p align="center">
+  <a href="README_CN.md">简体中文</a> | English
+</p>
 
-## 📦 版本说明
+<p align="center">
+  <img src="https://img.shields.io/github/v/release/badhope/picture-can-see?include_prereleases&style=flat-square" alt="GitHub release">
+  <img src="https://img.shields.io/github/actions/workflow/status/badhope/picture-can-see/ci.yml?branch=main&style=flat-square&label=CI" alt="CI Status">
+  <img src="https://img.shields.io/github/actions/workflow/status/badhope/picture-can-see/build-release.yml?branch=main&style=flat-square&label=Build" alt="Build Status">
+  <img src="https://img.shields.io/github/license/badhope/picture-can-see?style=flat-square" alt="License">
+  <img src="https://img.shields.io/github/stars/badhope/picture-can-see?style=flat-square" alt="Stars">
+  <img src="https://img.shields.io/github/forks/badhope/picture-can-see?style=flat-square" alt="Forks">
+  <img src="https://img.shields.io/github/issues/badhope/picture-can-see?style=flat-square" alt="Issues">
+</p>
 
-| 版本 | 目录 | 说明 | 适用场景 |
-|------|------|------|----------|
-| 🌐 **Web 版** | `/web` | 轻量级在线版本 | 快速展示、在线试用 |
-| 💻 **桌面版** | `/desktop` | 完整功能桌面应用 | 日常使用、数据处理 |
-
----
-
-## ✨ 核心功能
-
-### 📥 数据输入
-- 📁 **拖拽上传** - 支持 CSV、Excel、JSON、TSV、TXT 文件
-- 📋 **粘贴数据** - 直接粘贴 CSV 或 JSON 格式数据
-- ✏️ **手动输入** - 表格形式手动编辑数据
-
-### 🤖 智能推荐
-- 🔍 **自动分析** - 自动识别数据类型
-- 💡 **图表推荐** - 智能推荐最佳图表类型
-- 📝 **推荐理由** - 解释为什么推荐该图表
-
-### 📊 图表类型
-| 图表 | 图标 | 适用场景 |
-|------|------|----------|
-| 柱状图 | 📊 | 类别比较 |
-| 折线图 | 📈 | 趋势变化 |
-| 饼图 | 🥧 | 占比分布 |
-| 散点图 | ⚬ | 相关性分析 |
-| 雷达图 | 🎯 | 多维对比 |
-| 面积图 | 🏔️ | 累积趋势 |
-
-### 📤 导出功能
-- 🖼️ PNG 图片（高清）
-- 📐 SVG 矢量图
-- 📄 PDF 文档
-- 🌐 HTML 代码
-- 💾 项目文件（.pcv 格式，可再次编辑）
+<p align="center">
+  <img src="https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux%20%7C%20Web-blue?style=flat-square" alt="Platform">
+  <img src="https://img.shields.io/badge/Node.js-%3E%3D18.0.0-green?style=flat-square" alt="Node.js">
+  <img src="https://img.shields.io/badge/Electron-Latest-blue?style=flat-square" alt="Electron">
+  <img src="https://img.shields.io/badge/D3.js-7-orange?style=flat-square" alt="D3.js">
+</p>
 
 ---
 
-## 🚀 快速开始
+## Overview
 
-### 在线体验 (Web 版)
+**Picture Can See** is a modern, cross-platform data visualization application that transforms your raw data into beautiful, insightful charts with minimal effort. Whether you're a data analyst, researcher, student, or business professional, this tool makes data visualization accessible to everyone.
+
+### Why Picture Can See?
+
+- **Zero Learning Curve**: Drag and drop your data files, and get instant visualizations
+- **Smart Recommendations**: AI-powered chart type suggestions based on your data characteristics
+- **Multiple Export Formats**: Export to PNG, SVG, PDF, or HTML with one click
+- **Cross-Platform**: Available as a web application and desktop app (Windows, macOS, Linux)
+- **Privacy First**: All processing happens locally - your data never leaves your device
+- **No Dependencies**: Works offline with no internet connection required
+
+---
+
+## Features
+
+### Data Input
+
+| Method | Description | Supported Formats |
+|--------|-------------|-------------------|
+| Drag & Drop | Simply drag files onto the application | CSV, Excel, JSON, TSV, TXT |
+| Paste | Paste data directly from clipboard | CSV, JSON |
+| Manual Input | Edit data in a spreadsheet-like interface | - |
+
+### Supported Chart Types
+
+| Chart | Icon | Best For | Example Use Case |
+|-------|------|----------|------------------|
+| Bar Chart | 📊 | Category comparison | Sales by product |
+| Line Chart | 📈 | Trends over time | Stock prices, temperature |
+| Pie Chart | 🥧 | Part-to-whole relationships | Market share |
+| Scatter Plot | ⚬ | Correlation analysis | Height vs weight |
+| Radar Chart | 🎯 | Multi-dimensional comparison | Skill assessment |
+| Area Chart | 🏔️ | Cumulative trends | Revenue growth |
+
+### Smart Features
+
+- **Automatic Type Detection**: Intelligently identifies numeric, date, categorical, and text data
+- **Chart Recommendation**: Suggests the best chart type based on data characteristics
+- **Data Validation**: Detects and handles missing values, outliers, and format errors
+- **Undo/Redo**: Full history support for all operations
+
+### Export Options
+
+| Format | Description | Use Case |
+|--------|-------------|----------|
+| PNG | High-resolution raster image | Presentations, reports |
+| SVG | Scalable vector graphics | Print, further editing |
+| PDF | Portable document | Documentation, sharing |
+| HTML | Interactive web page | Web embedding |
+| PCV | Project file | Save and continue later |
+
+---
+
+## Installation
+
+### Desktop Application
+
+Download the latest version for your platform:
+
+| Platform | Download | Size |
+|----------|----------|------|
+| Windows | [picture-can-see-setup.exe](https://github.com/badhope/picture-can-see/releases) | ~80MB |
+| macOS | [picture-can-see.dmg](https://github.com/badhope/picture-can-see/releases) | ~90MB |
+| Linux | [picture-can-see.AppImage](https://github.com/badhope/picture-can-see/releases) | ~85MB |
+
+### Web Version
+
+Access the web version directly: [https://badhope.github.io/picture-can-see/](https://badhope.github.io/picture-can-see/)
+
+Or run locally:
 
 ```bash
-# 克隆仓库
 git clone https://github.com/badhope/picture-can-see.git
 cd picture-can-see/web
-
-# 启动本地服务器
 npx serve -l 3000
-
-# 访问 http://localhost:3000
 ```
 
-### 桌面版开发
+### Build from Source
 
 ```bash
-# 克隆仓库
+# Clone the repository
 git clone https://github.com/badhope/picture-can-see.git
-cd picture-can-see/desktop
+cd picture-can-see
 
-# 安装依赖
+# Install dependencies
 npm install
 
-# 启动开发模式
-npm start
+# Run desktop app in development mode
+npm run desktop
+
+# Build for production
+npm run desktop:build        # All platforms
+npm run desktop:build:win    # Windows only
+npm run desktop:build:mac    # macOS only
+npm run desktop:build:linux  # Linux only
 ```
 
 ---
 
-## 📥 下载安装
+## Quick Start
 
-### 桌面版下载
+### 1. Import Your Data
 
-前往 [Releases](https://github.com/badhope/picture-can-see/releases) 页面下载最新版本：
+**Drag & Drop**: Simply drag your data file onto the application window.
 
-| 平台 | 格式 | 说明 |
-|------|------|------|
-| Windows | `.exe` / `.zip` | 安装版 / 便携版 |
-| macOS | `.dmg` | 磁盘镜像 |
-| Linux | `.AppImage` / `.deb` | 通用二进制 / Debian包 |
+**Or use the menu**: Click "Import Data" and select your file.
 
-### 从源码构建
+### 2. Choose a Chart Type
 
-```bash
-# 构建所有平台
-npm run desktop:build
+The application will automatically recommend the best chart type for your data. You can also manually select from:
 
-# 构建特定平台
-npm run desktop:build:win    # Windows
-npm run desktop:build:mac    # macOS
-npm run desktop:build:linux  # Linux
-```
+- Bar Chart
+- Line Chart
+- Pie Chart
+- Scatter Plot
+- Radar Chart
+- Area Chart
+
+### 3. Customize
+
+Use the configuration panel to:
+
+- Set chart title and subtitle
+- Adjust axis labels
+- Change color schemes
+- Enable/disable legends and tooltips
+- Configure animations
+
+### 4. Export
+
+Click "Export" and choose your preferred format.
 
 ---
 
-## 📁 项目结构
+## Documentation
+
+### Project Structure
 
 ```
 picture-can-see/
-├── .github/                # GitHub 配置
-│   ├── workflows/          # CI/CD 工作流
-│   ├── ISSUE_TEMPLATE/     # Issue 模板
-│   └── ……
-├── web/                    # Web 版（在线展示）
-│   ├── src/               # 源代码
-│   │   ├── core/          # 核心架构
-│   │   ├── data/          # 数据处理
-│   │   ├── transform/     # 数据转换
-│   │   ├── visualization/ # 图表渲染
-│   │   ├── export/        # 导出功能
-│   │   └── ui/            # UI组件
-│   ├── styles/            # 样式文件
-│   ├── locales/           # 多语言
-│   ├── examples/          # 示例数据
-│   └── index.html         # 入口文件
+├── .github/                    # GitHub configurations
+│   ├── workflows/              # CI/CD pipelines
+│   ├── ISSUE_TEMPLATE/         # Issue templates
+│   └── PULL_REQUEST_TEMPLATE.md
 │
-├── desktop/               # 桌面版（完整功能）
-│   ├── src/               # 源代码（与Web版共用核心）
-│   ├── styles/            # 样式文件
-│   ├── locales/           # 多语言
-│   ├── examples/          # 示例数据
-│   ├── assets/            # 应用资源
-│   ├── main.js            # Electron 主进程
-│   ├── preload.js         # 预加载脚本
-│   └── index.html         # 入口文件
+├── web/                        # Web application
+│   ├── src/
+│   │   ├── core/              # Core architecture
+│   │   │   ├── app.js         # Application core
+│   │   │   ├── events.js      # Event system
+│   │   │   └── state.js       # Reactive state management
+│   │   ├── data/              # Data handling
+│   │   │   ├── parser.js      # File parsers
+│   │   │   ├── source.js      # Data source management
+│   │   │   └── input.js       # Input handlers
+│   │   ├── transform/         # Data transformation
+│   │   │   ├── detector.js    # Type detection
+│   │   │   └── transformer.js # Data transformation
+│   │   ├── visualization/     # Chart rendering
+│   │   │   ├── base.js        # Chart base class
+│   │   │   ├── charts.js      # Chart implementations
+│   │   │   └── recommender.js # Chart recommendation
+│   │   ├── export/            # Export functionality
+│   │   │   └── exporter.js    # Export handlers
+│   │   └── ui/                # UI components
+│   │       └── components.js  # UI components
+│   ├── styles/                # Stylesheets
+│   ├── locales/               # Internationalization
+│   ├── examples/              # Sample data files
+│   └── index.html             # Entry point
 │
-├── package.json           # 根项目配置
-├── .gitignore             # Git 忽略规则
-├── .editorconfig          # 编辑器配置
-├── .prettierrc            # Prettier 配置
-├── PRODUCT_DESIGN.md      # 产品设计文档
-└── README.md              # 项目说明
+├── desktop/                    # Desktop application
+│   ├── src/                   # Source code (shared with web)
+│   ├── main.js                # Electron main process
+│   ├── preload.js             # Preload script
+│   └── index.html             # Entry point
+│
+├── package.json               # Root package configuration
+├── LICENSE                    # MIT License
+├── CONTRIBUTING.md            # Contribution guidelines
+├── CHANGELOG.md               # Version history
+├── SECURITY.md                # Security policy
+├── CODE_OF_CONDUCT.md         # Code of conduct
+└── README.md                  # This file
+```
+
+### Technology Stack
+
+| Category | Technology | Purpose |
+|----------|------------|---------|
+| Visualization | D3.js 7 | Data-driven document manipulation |
+| File Parsing | SheetJS (xlsx) | Excel file handling |
+| Desktop | Electron | Cross-platform desktop app |
+| Build | electron-builder | Application packaging |
+| Styling | CSS3 | Modern styling with CSS variables |
+| Architecture | ES Modules | Native JavaScript modules |
+
+### Architecture
+
+The application follows a modular, event-driven architecture:
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                     UI Layer                            │
+│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐   │
+│  │ Toolbar  │ │ Sidebar  │ │  Chart   │ │  Config  │   │
+│  │          │ │          │ │  Area    │ │  Panel   │   │
+│  └──────────┘ └──────────┘ └──────────┘ └──────────┘   │
+└─────────────────────────────────────────────────────────┘
+                          │
+                          ▼
+┌─────────────────────────────────────────────────────────┐
+│                   Application Core                      │
+│  ┌──────────────────┐  ┌──────────────────┐            │
+│  │   Event System   │  │  Reactive State  │            │
+│  │   (EventEmitter) │  │   (ReactiveState)│            │
+│  └──────────────────┘  └──────────────────┘            │
+└─────────────────────────────────────────────────────────┘
+                          │
+                          ▼
+┌─────────────────────────────────────────────────────────┐
+│                   Business Logic                        │
+│  ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐       │
+│  │  Data   │ │Transform│ │  Chart  │ │ Export  │       │
+│  │ Layer   │ │  Layer  │ │  Layer  │ │  Layer  │       │
+│  └─────────┘ └─────────┘ └─────────┘ └─────────┘       │
+└─────────────────────────────────────────────────────────┘
+```
+
+### API Reference
+
+#### State Management
+
+```javascript
+import { app } from './core/app.js';
+
+const state = app.getState();
+
+state.get('chart.type');
+state.set('chart.type', 'bar');
+state.subscribe('chart.type', (newValue, oldValue) => {
+  console.log(`Chart type changed from ${oldValue} to ${newValue}`);
+});
+```
+
+#### Event System
+
+```javascript
+import { Events } from './core/events.js';
+
+app.on(Events.CHART_RENDERED, (chart) => {
+  console.log('Chart rendered:', chart);
+});
+
+app.emit(Events.DATA_LOADED, { source: 'file.csv' });
 ```
 
 ---
 
-## 🛠️ 技术栈
+## Contributing
 
-### 共用技术
-| 技术 | 用途 |
-|------|------|
-| **D3.js** | 数据可视化核心库 |
-| **SheetJS (xlsx)** | Excel 文件解析 |
-| **原生 JavaScript (ES6+)** | 无框架依赖 |
+We welcome contributions from the community! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
 
-### Web 版
-| 技术 | 用途 |
-|------|------|
-| HTML5 / CSS3 | 页面结构与样式 |
-| ES Modules | 模块化 |
+### Ways to Contribute
 
-### 桌面版
-| 技术 | 用途 |
-|------|------|
-| **Electron** | 跨平台桌面应用框架 |
-| **electron-builder** | 打包工具 |
+- 🐛 Report bugs via [Issues](https://github.com/badhope/picture-can-see/issues)
+- 💡 Suggest new features
+- 📝 Improve documentation
+- 🔧 Submit pull requests
+- 🌟 Star the repository
 
----
-
-## 🌐 多语言支持
-
-| 语言 | 代码 | 状态 |
-|------|------|------|
-| 🇨🇳 简体中文 | `zh-CN` | ✅ 完成 |
-| 🇺🇸 English | `en-US` | ✅ 完成 |
-| 🇯🇵 日本語 | `ja-JP` | ✅ 完成 |
-
----
-
-## 🎯 使用场景
-
-- ✅ 快速出图（办公报告）
-- ✅ 学术论文图表
-- ✅ 个人数据探索分析
-- ✅ 商业数据展示
-- ✅ 教学演示
-
----
-
-## 📝 数据格式示例
-
-### CSV 格式
-```csv
-名称,销量,利润
-产品A,120,45
-产品B,200,78
-产品C,150,52
-```
-
-### JSON 格式
-```json
-[
-  {"名称": "产品A", "销量": 120, "利润": 45},
-  {"名称": "产品B", "销量": 200, "利润": 78},
-  {"名称": "产品C", "销量": 150, "利润": 52}
-]
-```
-
----
-
-## 🔧 开发指南
-
-### 环境要求
-- Node.js >= 18.0.0
-- npm >= 9.0.0
-
-### 开发命令
+### Development Setup
 
 ```bash
-# 安装所有依赖
-npm run install:all
+# Fork and clone
+git clone https://github.com/YOUR_USERNAME/picture-can-see.git
+cd picture-can-see
 
-# 启动 Web 版
-npm run web
+# Install dependencies
+npm install
 
-# 启动桌面版
+# Create a feature branch
+git checkout -b feature/your-feature-name
+
+# Make changes and test
 npm run desktop
 
-# 清理依赖
-npm run clean
+# Commit and push
+git commit -m "feat: add your feature"
+git push origin feature/your-feature-name
+
+# Open a Pull Request
 ```
 
-### 代码规范
-- 使用 [Prettier](https://prettier.io/) 进行代码格式化
-- 使用 [EditorConfig](https://editorconfig.org/) 统一编辑器配置
+---
+
+## Roadmap
+
+### Version 1.1 (Planned)
+
+- [ ] Additional chart types (heatmap, treemap, box plot)
+- [ ] Data filtering and aggregation
+- [ ] Custom color palettes
+- [ ] Chart templates
+
+### Version 1.2 (Planned)
+
+- [ ] Real-time data streaming
+- [ ] Dashboard creation
+- [ ] Cloud sync (optional)
+- [ ] Plugin system
+
+### Version 2.0 (Future)
+
+- [ ] AI-powered insights
+- [ ] Natural language queries
+- [ ] Collaborative editing
+- [ ] Mobile companion app
 
 ---
 
-## 🤝 贡献指南
+## License
 
-欢迎贡献代码！请查看 [贡献指南](CONTRIBUTING.md) 了解详情。
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-1. Fork 本仓库
-2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
-3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
-4. 推送到分支 (`git push origin feature/AmazingFeature`)
-5. 创建 Pull Request
+```
+MIT License
 
----
+Copyright (c) 2024-2025 Picture Can See Team
 
-## 📄 许可证
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-本项目采用 [MIT License](LICENSE) 许可证。
-
----
-
-## 🙏 致谢
-
-- [D3.js](https://d3js.org/) - 数据可视化库
-- [Electron](https://www.electronjs.org/) - 跨平台桌面应用框架
-- [SheetJS](https://sheetjs.com/) - Excel 解析库
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+```
 
 ---
 
-⭐ 如果这个项目对你有帮助，请点个 Star！
+## Acknowledgments
+
+- [D3.js](https://d3js.org/) - Data-Driven Documents
+- [Electron](https://www.electronjs.org/) - Build cross-platform desktop apps
+- [SheetJS](https://sheetjs.com/) - Spreadsheet data toolkit
+- [Feather Icons](https://feathericons.com/) - Beautiful open source icons
+
+---
+
+## Support
+
+- 📖 [Documentation](https://github.com/badhope/picture-can-see/wiki)
+- 🐛 [Issue Tracker](https://github.com/badhope/picture-can-see/issues)
+- 💬 [Discussions](https://github.com/badhope/picture-can-see/discussions)
+
+---
+
+<p align="center">
+  Made with ❤️ by the Picture Can See Team
+</p>
+
+<p align="center">
+  <a href="https://github.com/badhope/picture-can-see/stargazers">
+    <img src="https://img.shields.io/github/stars/badhope/picture-can-see?style=social" alt="Star us on GitHub">
+  </a>
+</p>
