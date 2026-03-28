@@ -1,0 +1,10 @@
+[
+  {"name": "北京", "gdp": 4.16, "population": 2189, "area": 16410},
+  {"name": "上海", "gdp": 4.72, "population": 2487, "area": 6340},
+  {"name": "广州", "gdp": 2.88, "population": 1881, "area": 7434},
+  {"name": "深圳", "gdp": 3.24, "population": 1768, "area": 1997},
+  {"name": "杭州", "gdp": 1.89, "population": 1237, "area": 16596},
+  {"name": "成都", "gdp": 2.08, "population": 2119, "area": 14335},
+  {"name": "武汉", "gdp": 1.89, "population": 1365, "area": 8569},
+  {"name": "南京", "gdp": 1.68, "population": 942, "area": 6587}
+]
