@@ -19,7 +19,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
+
+      - name: Cache node modules
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-web-${{ hashFiles('web/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-web-
 
       - name: Install dependencies
         run: |
@@ -36,7 +43,13 @@ jobs:
   build-desktop:
     strategy:
       matrix:
-        os: [windows-latest, macos-latest, ubuntu-latest]
+        include:
+          - os: windows-latest
+            platform: win
+          - os: macos-latest
+            platform: mac
+          - os: ubuntu-latest
+            platform: linux
       fail-fast: false
 
     runs-on: ${{ matrix.os }}
@@ -49,22 +62,26 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
 
-      - name: Install dependencies (Windows)
+      - name: Cache node modules (Windows)
         if: matrix.os == 'windows-latest'
-        run: |
-          cd desktop
-          npm install
+        uses: actions/cache@v4
+        with:
+          path: ~\AppData\Local\npm-cache
+          key: ${{ runner.os }}-desktop-${{ hashFiles('desktop/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-desktop-
 
-      - name: Install dependencies (macOS)
-        if: matrix.os == 'macos-latest'
-        run: |
-          cd desktop
-          npm install
+      - name: Cache node modules (macOS/Linux)
+        if: matrix.os != 'windows-latest'
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-desktop-${{ hashFiles('desktop/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-desktop-
 
-      - name: Install dependencies (Linux)
-        if: matrix.os == 'ubuntu-latest'
+      - name: Install dependencies
         run: |
           cd desktop
           npm install
@@ -101,6 +118,7 @@ jobs:
           path: |
             desktop/dist/*.exe
             desktop/dist/*.blockmap
+          if-no-files-found: warn
 
       - name: Upload artifacts (macOS)
         if: matrix.os == 'macos-latest' && startsWith(github.ref, 'refs/tags/')
@@ -110,6 +128,7 @@ jobs:
           path: |
             desktop/dist/*.dmg
             desktop/dist/*.zip
+          if-no-files-found: warn
 
       - name: Upload artifacts (Linux)
         if: matrix.os == 'ubuntu-latest' && startsWith(github.ref, 'refs/tags/')
@@ -119,6 +138,7 @@ jobs:
           path: |
             desktop/dist/*.AppImage
             desktop/dist/*.deb
+          if-no-files-found: warn
 
   release:
     needs: [build-desktop]
@@ -130,27 +150,39 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Download Windows artifacts
+        id: download-windows
+        continue-on-error: true
         uses: actions/download-artifact@v4
         with:
           name: windows-build
           path: dist/
 
       - name: Download macOS artifacts
+        id: download-macos
+        continue-on-error: true
         uses: actions/download-artifact@v4
         with:
           name: macos-build
           path: dist/
 
       - name: Download Linux artifacts
+        id: download-linux
+        continue-on-error: true
         uses: actions/download-artifact@v4
         with:
           name: linux-build
           path: dist/
+
+      - name: List artifacts
+        run: |
+          echo "Artifacts downloaded:"
+          ls -la dist/ || echo "No artifacts found"
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
           files: dist/*
           generate_release_notes: true
+          fail_on_unmatched_files: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

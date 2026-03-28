@@ -3,8 +3,26 @@
   "version": "1.0.0",
   "description": "Picture Can See - 数据可视化工具 (Web版)",
   "scripts": {
-    "start": "npx serve -l 3000"
+    "start": "npx serve -l 3000",
+    "dev": "npx serve -l 3000"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/badhope/picture-can-see.git",
+    "directory": "web"
+  },
+  "bugs": {
+    "url": "https://github.com/badhope/picture-can-see/issues"
+  },
+  "homepage": "https://github.com/badhope/picture-can-see#readme",
+  "keywords": [
+    "data-visualization",
+    "chart",
+    "d3",
+    "csv",
+    "json",
+    "visualization"
+  ],
   "author": "Picture Can See Team",
   "license": "MIT"
 }
