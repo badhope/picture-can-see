@@ -1,0 +1,10 @@
+{
+  "name": "picture-can-see-web",
+  "version": "1.0.0",
+  "description": "Picture Can See - 数据可视化工具 (Web版)",
+  "scripts": {
+    "start": "npx serve -l 3000"
+  },
+  "author": "Picture Can See Team",
+  "license": "MIT"
+}

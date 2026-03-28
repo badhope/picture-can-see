@@ -22,4 +22,12 @@ env/
 # Build
 dist/
 build/
+out/
 *.zip
+
+# Electron
+release/
+
+# Environment
+.env
+.env.local

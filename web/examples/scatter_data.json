@@ -1,0 +1,17 @@
+[
+  {"x": 10, "y": 25, "category": "A"},
+  {"x": 15, "y": 35, "category": "A"},
+  {"x": 20, "y": 28, "category": "A"},
+  {"x": 25, "y": 45, "category": "A"},
+  {"x": 30, "y": 52, "category": "A"},
+  {"x": 12, "y": 18, "category": "B"},
+  {"x": 18, "y": 28, "category": "B"},
+  {"x": 22, "y": 32, "category": "B"},
+  {"x": 28, "y": 38, "category": "B"},
+  {"x": 35, "y": 48, "category": "B"},
+  {"x": 8, "y": 42, "category": "C"},
+  {"x": 14, "y": 55, "category": "C"},
+  {"x": 19, "y": 48, "category": "C"},
+  {"x": 26, "y": 62, "category": "C"},
+  {"x": 32, "y": 58, "category": "C"}
+]

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Picture Can See - 数据可视化工具</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+    <div class="app">
+        <header id="toolbar"></header>
+        
+        <main class="main-content" id="mainContent">
+            <aside id="sidebar"></aside>
+            
+            <section class="chart-area">
+                <div class="chart-wrapper" id="chartContainer"></div>
+                <div class="chart-placeholder" id="chartPlaceholder">
+                    <div class="placeholder-content">
+                        <span class="placeholder-icon">📊</span>
+                        <h2>导入数据开始可视化</h2>
+                        <p>拖拽文件到此处，或使用左侧面板导入数据</p>
+                        <div class="supported-formats">
+                            <span class="format-tag">CSV</span>
+                            <span class="format-tag">Excel</span>
+                            <span class="format-tag">JSON</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <aside id="configPanel"></aside>
+        </main>
+        
+        <footer class="status-bar">
+            <span class="status-item" id="statusData">暂无数据</span>
+            <span class="status-item" id="statusChart">-</span>
+            <span class="status-item" id="statusProject">未保存</span>
+        </footer>
+    </div>
+
+    <script type="module" src="src/main.js"></script>
+</body>
+</html>
