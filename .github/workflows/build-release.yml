@@ -152,7 +152,7 @@ jobs:
       - name: Download Windows artifacts
         id: download-windows
         continue-on-error: true
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: windows-build
           path: dist/
@@ -160,7 +160,7 @@ jobs:
       - name: Download macOS artifacts
         id: download-macos
         continue-on-error: true
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: macos-build
           path: dist/
@@ -168,7 +168,7 @@ jobs:
       - name: Download Linux artifacts
         id: download-linux
         continue-on-error: true
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: linux-build
           path: dist/
