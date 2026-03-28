@@ -9,11 +9,12 @@ export class CSVParser {
     parse(content) {
         const lines = this._splitLines(content);
         if (lines.length === 0) {
-            return { headers: [], data: [] };
+            return { headers: [], data: [], errors: [] };
         }
 
         const headers = this._parseLine(lines[0]);
         const data = [];
+        const errors = [];
 
         for (let i = 1; i < lines.length; i++) {
             const line = lines[i].trim();
@@ -29,7 +30,7 @@ export class CSVParser {
             data.push(row);
         }
 
-        return { headers, data };
+        return { headers, data, errors };
     }
 
     _splitLines(content) {
@@ -161,9 +162,9 @@ export class JSONParser {
                 headers = Object.keys(data[0]);
             }
 
-            return { headers, data };
+            return { headers, data, errors: [] };
         } catch (error) {
-            throw new Error(`JSON解析失败: ${error.message}`);
+            return { headers: [], data: [], errors: [`JSON解析失败: ${error.message}`] };
         }
     }
 }

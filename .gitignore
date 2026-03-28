@@ -1,16 +1,21 @@
 # OS
 .DS_Store
 Thumbs.db
+Desktop.ini
 
 # IDE
 .vscode/
 .idea/
 *.swp
 *~
+*.sublime-*
 
 # Logs
 *.log
 logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
 # Dependencies
 node_modules/
@@ -24,10 +29,42 @@ dist/
 build/
 out/
 *.zip
+*.tar.gz
 
 # Electron
 release/
+desktop/dist/
 
 # Environment
 .env
 .env.local
+.env.*.local
+
+# Cache
+.cache/
+.parcel-cache/
+.eslintcache
+
+# Test
+coverage/
+.nyc_output/
+
+# Temp
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Lock files (keep package-lock.json)
+yarn.lock
+pnpm-lock.yaml
+
+# Electron specific
+desktop/*.blockmap
+desktop/*.exe
+desktop/*.dmg
+desktop/*.AppImage
+desktop/*.snap
+
+# Web specific
+web/.serve

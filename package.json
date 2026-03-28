@@ -1,0 +1,41 @@
+{
+  "name": "picture-can-see",
+  "version": "1.0.0",
+  "description": "Picture Can See - 数据可视化工具 (Web版 + 桌面版)",
+  "private": true,
+  "workspaces": [
+    "web",
+    "desktop"
+  ],
+  "scripts": {
+    "web": "cd web && npm start",
+    "desktop": "cd desktop && npm start",
+    "desktop:build": "cd desktop && npm run build",
+    "desktop:build:win": "cd desktop && npm run build:win",
+    "desktop:build:mac": "cd desktop && npm run build:mac",
+    "desktop:build:linux": "cd desktop && npm run build:linux",
+    "install:all": "npm install && cd web && npm install && cd ../desktop && npm install",
+    "clean": "rimraf node_modules web/node_modules desktop/node_modules desktop/dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/badhope/picture-can-see.git"
+  },
+  "keywords": [
+    "data-visualization",
+    "chart",
+    "d3",
+    "electron",
+    "csv",
+    "excel",
+    "json"
+  ],
+  "author": "Picture Can See Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "rimraf": "^5.0.5"
+  }
+}
