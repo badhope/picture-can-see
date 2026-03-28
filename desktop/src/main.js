@@ -246,54 +246,63 @@ class DesktopApplication {
     }
 
     async _parseFileContent(content, fileName, ext) {
-        const { fileParser } = await import('./data/parser.js');
-        let result;
-        
-        if (ext === '.json') {
-            result = fileParser.parseText(content, 'json');
-        } else if (ext === '.tsv') {
-            result = fileParser.parseText(content, 'tsv');
-        } else if (['.xlsx', '.xls'].includes(ext)) {
-            const XLSX = await import('xlsx');
-            const workbook = XLSX.read(content, { type: 'array' });
-            const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-            const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+        try {
+            const { fileParser } = await import('./data/parser.js');
+            let result;
             
-            if (jsonData.length > 0) {
-                const headers = jsonData[0];
-                const data = jsonData.slice(1).map(row => {
-                    const obj = {};
-                    headers.forEach((h, i) => {
-                        obj[h] = row[i] !== undefined ? row[i] : null;
+            if (ext === '.json') {
+                result = fileParser.parseText(content, 'json');
+            } else if (ext === '.tsv') {
+                result = fileParser.parseText(content, 'tsv');
+            } else if (['.xlsx', '.xls'].includes(ext)) {
+                const XLSX = await import('xlsx');
+                const arrayBuffer = content instanceof Uint8Array 
+                    ? content 
+                    : new Uint8Array(content);
+                const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+                
+                if (jsonData.length > 0) {
+                    const headers = jsonData[0];
+                    const data = jsonData.slice(1).map(row => {
+                        const obj = {};
+                        headers.forEach((h, i) => {
+                            obj[h] = row[i] !== undefined ? row[i] : null;
+                        });
+                        return obj;
                     });
-                    return obj;
-                });
-                result = { headers, data, errors: [] };
+                    result = { headers, data, errors: [] };
+                } else {
+                    result = { headers: [], data: [], errors: ['空文件'] };
+                }
             } else {
-                result = { headers: [], data: [], errors: ['空文件'] };
+                result = fileParser.parseText(content, 'csv');
             }
-        } else {
-            result = fileParser.parseText(content, 'csv');
+            
+            if (result.errors && result.errors.length > 0) {
+                this.toast.show(`解析警告: ${result.errors.join(', ')}`, 'warning');
+            }
+            
+            const source = this.dataSourceManager.loadFromText(
+                JSON.stringify(result.data),
+                'json',
+                fileName
+            );
+            
+            this.rawData = result.data;
+            this.headers = result.headers;
+            app.state.update({
+                'data.rawData': result.data,
+                'data.headers': result.headers
+            });
+            
+            return source;
+        } catch (error) {
+            this.toast.show(`解析失败: ${error.message}`, 'error');
+            console.error('Parse error:', error);
+            return null;
         }
-        
-        if (result.errors.length > 0) {
-            this.toast.show(`解析警告: ${result.errors.join(', ')}`, 'warning');
-        }
-        
-        const source = this.dataSourceManager.loadFromText(
-            JSON.stringify(result.data),
-            'json',
-            fileName
-        );
-        
-        this.rawData = result.data;
-        this.headers = result.headers;
-        app.state.update({
-            'data.rawData': result.data,
-            'data.headers': result.headers
-        });
-        
-        return source;
     }
 
     _handlePaste(text, format) {
@@ -582,7 +591,7 @@ class DesktopApplication {
             this.currentFilePath = filePath;
             this.isModified = false;
             app.state.set('project.modified', false);
-            app.state.set('project.name', path.basename(filePath, '.pcv'));
+            app.state.set('project.name', filePath.split(/[\\/]/).pop().replace(/\.pcv$/, ''));
             this.toast.show('项目已保存', 'success');
         } else {
             this.toast.show(`保存失败: ${result.error}`, 'error');
