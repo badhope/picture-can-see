@@ -19,7 +19,7 @@ jobs:
           node-version: '20'
 
       - name: Cache node modules
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
@@ -44,7 +44,7 @@ jobs:
           node-version: '20'
 
       - name: Cache node modules
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
@@ -80,7 +80,7 @@ jobs:
 
       - name: Cache node modules (Windows)
         if: matrix.os == 'windows-latest'
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~\AppData\Local\npm-cache
           key: ${{ runner.os }}-desktop-${{ hashFiles('desktop/package-lock.json') }}
@@ -89,7 +89,7 @@ jobs:
 
       - name: Cache node modules (macOS/Linux)
         if: matrix.os != 'windows-latest'
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.npm
           key: ${{ runner.os }}-desktop-${{ hashFiles('desktop/package-lock.json') }}
